@@ -34,3 +34,9 @@ Append-only master history of all events in the Flip-Prototype directory.
 - **Location:** raw/, Output/Deprecated/, Output/MD Files/
 - **Reason:** Git does not track empty directories; the GPS structure requires all three.
 - **Source Log:** Maintenance/setup-log.md
+
+### [22-09-26 15:28] — CREATED | README.md
+- **Action:** Added project README at repository root — game summary, stack, repo layout, spec entry points, build order, branch roles, wiki working rules.
+- **Location:** README.md
+- **Reason:** Repository had no landing documentation.
+- **Source Log:** Maintenance/setup-log.md

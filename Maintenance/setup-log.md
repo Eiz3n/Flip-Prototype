@@ -157,6 +157,12 @@ Append every structural change. Dual-written with `Commands and Logs/directory-l
 - **Reason:** Git does not track empty directories, so all three would vanish on a clone. The GPS structure requires them, and the REINSTALL snapshot lists them.
 - **Linkages/References affected:** Original File Structure Snapshot above lists these three directories — they now contain a tracked file each, so a clone reproduces the snapshot exactly. `Commands and Logs/directory-log.md` dual-written.
 
+### [22-09-26 15:28] — CREATED | README.md
+- **Action:** Added a project README at the repository root.
+- **Location:** `README.md`
+- **Reason:** Repository had no landing documentation. Placed at root rather than `Commands and Logs/` — it is reader-facing project documentation, not an agent instruction or rule file, so the "all new instruction or rule files go to Commands and Logs/ only" rule does not apply.
+- **Linkages/References affected:** Links into `Commands and Logs/main-index.md`, `Reference Files/Flip-TDD.md`, and five wiki pages. Not itself indexed in any GPS index — it sits outside the indexed folders by design.
+
 ---
 
 ## Reinstall History
