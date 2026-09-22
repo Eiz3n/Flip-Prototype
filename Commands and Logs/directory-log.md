@@ -28,3 +28,9 @@ Append-only master history of all events in the Flip-Prototype directory.
 - **Location:** CLAUDE.md
 - **Reason:** Template form resolved to Commands and Logs/wiki/ and did not open; 16 broken links found by link check during the Flip TDD ingest.
 - **Source Log:** Maintenance/setup-log.md
+
+### [22-09-26 15:24] — CREATED | .gitkeep placeholders
+- **Action:** Added `.gitkeep` to `raw/`, `Output/Deprecated/` and `Output/MD Files/` so the three empty GPS folders survive a git clone.
+- **Location:** raw/, Output/Deprecated/, Output/MD Files/
+- **Reason:** Git does not track empty directories; the GPS structure requires all three.
+- **Source Log:** Maintenance/setup-log.md

@@ -151,6 +151,12 @@ Append every structural change. Dual-written with `Commands and Logs/directory-l
 - **Reason:** The GPS §1.3 template form resolves to `Commands and Logs/wiki/` because `main-index.md` lives in `Commands and Logs/`. A link check during the ingest reported 16 broken links. Corrected in both `main-index.md` and the schema so future ingests use the working form.
 - **Linkages/References affected:** `Commands and Logs/main-index.md`; the archived controller `Maintenance/wiki-setup-controller.md` still carries the original §1.3 template form and was deliberately not edited — it is the recovery baseline. A REINSTALL would restore the broken form.
 
+### [22-09-26 15:24] — CREATED | .gitkeep placeholders
+- **Action:** Added `.gitkeep` to `raw/`, `Output/Deprecated/` and `Output/MD Files/`.
+- **Location:** `raw/`, `Output/Deprecated/`, `Output/MD Files/`
+- **Reason:** Git does not track empty directories, so all three would vanish on a clone. The GPS structure requires them, and the REINSTALL snapshot lists them.
+- **Linkages/References affected:** Original File Structure Snapshot above lists these three directories — they now contain a tracked file each, so a clone reproduces the snapshot exactly. `Commands and Logs/directory-log.md` dual-written.
+
 ---
 
 ## Reinstall History
