@@ -40,3 +40,39 @@ Append-only master history of all events in the Flip-Prototype directory.
 - **Location:** README.md
 - **Reason:** Repository had no landing documentation.
 - **Source Log:** Maintenance/setup-log.md
+
+### [23-09-26 20:24] — CREATED | Working Files/2026-09-23-flip-v1-design.md
+- **Action:** Wrote the Flip v1 design spec (2 custom rooms, art from the Claude Design canvas "Flip Art"). Indexed in working-files-index.md.
+- **Location:** Working Files/2026-09-23-flip-v1-design.md
+- **Reason:** Brainstorming session output; user asked for the spec before implementation.
+- **Source Log:** Working Files/working-files-index.md
+
+### [23-09-26 21:24] — CREATED | Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Action:** Wrote the Flip v1 dev implementation plan (13 TDD tasks: engine, config/theme, per-room level files, sim, state machine, view core, blockout art slots, build gate). Indexed in working-files-index.md.
+- **Location:** Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Reason:** User asked for separate dev and art implementation plans; this is the dev plan.
+- **Source Log:** Working Files/working-files-index.md
+
+### [23-09-26 21:59] — EDITED | Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Action:** Applied the nine minor findings from the subagent plan review (tests, validator rules, repel bot, art-contract normalisation, next-room reset, launch assist and latency changes, font and HUD notes).
+- **Location:** Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Reason:** User asked to fix all minor review findings.
+- **Source Log:** —
+
+### [23-09-26 22:14] — EDITED | Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Action:** Applied review finding M1: obstacle friction once per contact, configurable stall death, tests and deviation rows.
+- **Location:** Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Reason:** User asked to fix M1, choosing stall death with a configurable time.
+- **Source Log:** —
+
+### [24-09-26 00:45] — MOVED | repository root
+- **Action:** Whole repository copied (including `.git` and uncommitted files) from `D:\Personal\#Resume & CV\Applications 2026\Lila Games - Test\Flip Prototype Game\Flip-Prototype` to `D:\Gitlab\Lila Test`. Verified: same branch, same HEAD, same working-tree status, `git fsck` clean. Old copy left for the user to delete.
+- **Location:** D:\Gitlab\Lila Test
+- **Reason:** `&` and `#` in the old path break npm, Vite and Vitest on Windows (plan review B1).
+- **Source Log:** Maintenance/setup-log.md
+
+### [24-09-26 00:50] — CREATED | Reference Files/Flip Art.html
+- **Action:** Detected the untracked design-canvas export and indexed it in reference-index.md.
+- **Location:** Reference Files/Flip Art.html
+- **Reason:** Reference File Added workflow; the file had not been indexed when it was added.
+- **Source Log:** Reference Files/reference-index.md

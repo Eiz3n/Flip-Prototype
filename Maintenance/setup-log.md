@@ -163,6 +163,12 @@ Append every structural change. Dual-written with `Commands and Logs/directory-l
 - **Reason:** Repository had no landing documentation. Placed at root rather than `Commands and Logs/` — it is reader-facing project documentation, not an agent instruction or rule file, so the "all new instruction or rule files go to Commands and Logs/ only" rule does not apply.
 - **Linkages/References affected:** Links into `Commands and Logs/main-index.md`, `Reference Files/Flip-TDD.md`, and five wiki pages. Not itself indexed in any GPS index — it sits outside the indexed folders by design.
 
+### [24-09-26 00:45] — MOVED | repository root
+- **Action:** Whole repository copied (robocopy, including `.git` and uncommitted files) from `D:\Personal\#Resume & CV\Applications 2026\Lila Games - Test\Flip Prototype Game\Flip-Prototype` to `D:\Gitlab\Lila Test`. Verified: same branch `Dev`, HEAD `5692a74`, same working-tree status, `git fsck` clean. Old copy left in place for the user to delete.
+- **Location:** `D:\Gitlab\Lila Test` (new repository root)
+- **Reason:** `&` and `#` in the old path break npm's Windows command shims and Vite/Vitest path-to-URL handling (plan review finding B1). User chose this location.
+- **Linkages/References affected:** None inside the repo — all internal links are relative and no file holds the old absolute path. Claude memory copied to the new path's project key. The internal folder structure is unchanged, so the Original File Structure Snapshot above still holds.
+
 ---
 
 ## Reinstall History
