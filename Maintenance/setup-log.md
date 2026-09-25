@@ -217,6 +217,12 @@ Append every structural change. Dual-written with `Commands and Logs/directory-l
 - **Reason:** Art plan Task 1 Step 5 — folder has real files.
 - **Linkages/References affected:** `theme.font.file` (`./fonts/baloo2-subset.woff2`) now resolves; loaded by `src/view/fonts.js`. Not in any GPS index.
 
+### [25-09-26 15:36] — CREATED | game/src/view/debug/
+- **Action:** Added the dev-only debug folder: `poses.js` (`?pose=title|room1|room2|win` freezes a canvas artboard scene) and `colourBlind.js` (`?cb=protan|deutan|tritan` CSS colour-vision filter).
+- **Location:** `game/src/view/debug/`
+- **Reason:** Art plan Task 8 — side-by-side check against the Flip Art canvas. Loaded only behind `import.meta.env.DEV`; never in the production bundle.
+- **Linkages/References affected:** Imported dynamically by `game/src/main.js` in dev builds only. Not in any GPS index.
+
 ---
 
 ## Reinstall History

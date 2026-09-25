@@ -3,6 +3,7 @@ import { config } from '../config.js';
 import { titleFlipValue } from './anim/effects.js';
 import { drawLogo } from './art/logo.js';
 import { drawHookDisc } from './art/hookPoint.js';
+import { centredBaseline } from './art/marks.js';
 import { drawTabular, tabularWidth, formatTime } from './art/hud.js';
 
 const TAU = Math.PI * 2;
@@ -12,9 +13,8 @@ function text(ctx, s, x, y, size, weight, theme, align = 'center', alpha = 1) {
   ctx.font = `${weight} ${size}px ${theme.font.family}`;
   ctx.fillStyle = theme.color.ink;
   ctx.textAlign = align;
-  ctx.textBaseline = 'middle';
   ctx.globalAlpha = alpha;
-  ctx.fillText(s, x, y);
+  ctx.fillText(s, x, centredBaseline(ctx, y, size));
   ctx.globalAlpha = 1;
 }
 
@@ -83,8 +83,7 @@ export function drawWin(ctx, game, theme) {
     text(ctx, label, left, y, f.rowSize, f.body, theme, 'left');
     ctx.font = `${f.logo} ${f.rowSize}px ${f.family}`;
     ctx.fillStyle = theme.color.ink;
-    ctx.textBaseline = 'middle';
-    drawTabular(ctx, value, right - tabularWidth(ctx, value) / 2, y);
+    drawTabular(ctx, value, right - tabularWidth(ctx, value) / 2, centredBaseline(ctx, y, f.rowSize));
   });
 
   const bottom = top + height;

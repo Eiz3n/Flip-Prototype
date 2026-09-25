@@ -395,3 +395,50 @@ test('win: Cleared, rounded neutral panel with three rows, New best only when be
   const y = (c) => calls(c, 'fillText').find((e) => e.args[0] === 'tap to return').args[2];
   expect(y(plain)).toBe(y(ctx));                                    // no layout jump
 });
+
+import { makeRig } from './scenes.js';
+import { applyPose } from '../src/view/debug/poses.js';
+
+test('room1 pose matches the Room 1 artboard state', () => {
+  const { game, fx, draw } = makeRig();
+  expect(applyPose('room1', game, fx)).toBe(true);
+  const w = game.world, p = w.player;
+  expect(game.state).toBe('playing');
+  expect(w.roomIndex).toBe(0);
+  expect(p.latched).toBe(w.room.hookPoints[0]);
+  expect(p.pos.x).toBeCloseTo(131.21, 1);
+  expect(p.pos.y).toBeCloseTo(448.79, 1);
+  expect(game.runTime).toBeCloseTo(18.4);
+  const ctx = recordingCtx();
+  draw(ctx);
+  expect(calls(ctx, 'fillRect').some((e) => e.fill === '#26252E' && e.args[1] === 260 && e.args[2] === 360)).toBe(true);
+});
+
+test('room2, title and win poses render; unknown names are refused', () => {
+  for (const name of ['room2', 'title', 'win']) {
+    const { game, fx, draw } = makeRig();
+    expect(applyPose(name, game, fx)).toBe(true);
+    expect(() => draw(recordingCtx())).not.toThrow();
+  }
+  const { game, fx } = makeRig();
+  expect(applyPose('nope', game, fx)).toBe(false);
+});
+
+// Canvas side-by-side (Task 8): CSS centres each text's line box, so the baseline sits at
+// centre + (fontAscent − fontDescent) / 2. Baloo 2 at 13 px: ascent 14, descent 7 → +3.5.
+const BALOO = { ascent: 14 / 13, descent: 7 / 13 };
+
+test('HUD text sits on the canvas baseline: line box centred on the row', () => {
+  const ctx = recordingCtx(BALOO);
+  drawHud(ctx, { room: 1, rooms: 2, timeMs: 18_400, deaths: 2, roomPop: 0 }, theme);
+  const deaths = calls(ctx, 'fillText').find((e) => e.args[0] === '× 2');
+  expect(deaths.args[2]).toBeCloseTo(27.5);                          // 24 + (14 − 7) / 2
+  expect(ctx.textBaseline).toBe('alphabetic');
+});
+
+test('title and win text use the same line-box centring', () => {
+  const ctx = recordingCtx(BALOO);
+  drawWin(ctx, winGame(true), theme);
+  const cleared = calls(ctx, 'fillText').find((e) => e.args[0] === 'Cleared');
+  expect(cleared.args[2]).toBeCloseTo(190 + 44 * 1.6 / 2 + 44 * (BALOO.ascent - BALOO.descent) / 2);
+});

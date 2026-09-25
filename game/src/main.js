@@ -29,6 +29,20 @@ const game = createGame({
   onEvent: (e) => handleEvent(fx, e, game.world),
 });
 
+// Dev-only visual tools: ?pose=title|room1|room2|win freezes a canvas scene; ?cb=protan|deutan|tritan.
+let posed = false;
+if (import.meta.env.DEV) {
+  const params = new URLSearchParams(location.search);
+  if (params.has('pose')) {
+    const { applyPose } = await import('./view/debug/poses.js');
+    posed = applyPose(params.get('pose'), game, fx);
+  }
+  if (params.has('cb')) {
+    const { applyColourBlindFilter } = await import('./view/debug/colourBlind.js');
+    applyColourBlindFilter(canvas, params.get('cb'));
+  }
+}
+
 function resize() {
   const dpr = Math.min(window.devicePixelRatio || 1, theme.render.maxDpr);
   const w = window.innerWidth, h = window.innerHeight;
@@ -57,10 +71,14 @@ function frame(now) {
   const dt = Math.max(0, Math.min((now - last) / 1000, config.maxFrameDelta));
   last = now;
   acc += dt;
-  while (acc >= config.step) {
-    update(game, config.step);
-    updateEffects(fx, config.step * game.timeScale, game.world);
-    acc -= config.step;
+  if (posed) {
+    acc = 0;
+  } else {
+    while (acc >= config.step) {
+      update(game, config.step);
+      updateEffects(fx, config.step * game.timeScale, game.world);
+      acc -= config.step;
+    }
   }
   if (fx.shakeRequest.time > 0) {
     shake(cam, fx.shakeRequest.amount, fx.shakeRequest.time);
@@ -88,5 +106,5 @@ function stop() {
 window.addEventListener('resize', resize);
 document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
 resize();
-bindInput(canvas, window, () => tap(game));
+bindInput(canvas, window, () => { if (!posed) tap(game); });
 loadFonts(theme.font).finally(start);

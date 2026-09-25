@@ -1,5 +1,6 @@
 // HUD row (canvas Room 1 / Room 2): "n / N" left, timer centre (tabular, tenths), "× d" right.
 import { config } from '../../config.js';
+import { centredBaseline } from './marks.js';
 
 const DIGITS = '0123456789';
 const isDigit = (ch) => ch >= '0' && ch <= '9';
@@ -37,8 +38,8 @@ export function drawHud(ctx, hud, theme) {
   const f = theme.font, h = theme.hud, R = config.room;
   const y = h.y + h.rowHeight / 2;
   ctx.fillStyle = theme.color.ink;
-  ctx.textBaseline = 'middle';
   ctx.font = `${f.hud} ${f.hudSize}px ${f.family}`;
+  const base = centredBaseline(ctx, y, f.hudSize);
 
   // Room label, popping once when the room is cleared.
   const k = hud.roomPop > 0 ? 1 - hud.roomPop / theme.fx.roomPopTime : 1;
@@ -47,12 +48,12 @@ export function drawHud(ctx, hud, theme) {
   ctx.save();
   ctx.translate(h.sidePad, y);
   if (s !== 1) ctx.scale(s, s);
-  ctx.fillText(`${hud.room} / ${hud.rooms}`, 0, 0);
+  ctx.fillText(`${hud.room} / ${hud.rooms}`, 0, base - y);
   ctx.restore();
 
   ctx.textAlign = 'right';
-  ctx.fillText(`× ${hud.deaths}`, R.width - h.sidePad, y);
+  ctx.fillText(`× ${hud.deaths}`, R.width - h.sidePad, base);
 
   ctx.font = `${f.hud} ${f.timerSize}px ${f.family}`;
-  drawTabular(ctx, formatTime(hud.timeMs), R.width / 2, y);
+  drawTabular(ctx, formatTime(hud.timeMs), R.width / 2, centredBaseline(ctx, y, f.timerSize));
 }

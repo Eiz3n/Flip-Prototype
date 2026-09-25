@@ -178,3 +178,9 @@ Append-only master history of all events in the Flip-Prototype directory.
 - **Location:** game/public/fonts/.gitkeep
 - **Reason:** Art plan Task 1 Step 5 — folder has real files.
 - **Source Log:** Maintenance/setup-log.md (Structural Change Log)
+
+### [25-09-26 15:36] — CREATED | game/src/view/debug/
+- **Action:** Added the dev-only debug folder: `poses.js` (`?pose=title|room1|room2|win` freezes a canvas artboard scene) and `colourBlind.js` (`?cb=protan|deutan|tritan` CSS colour-vision filter).
+- **Location:** game/src/view/debug/
+- **Reason:** Art plan Task 8 — side-by-side check against the Flip Art canvas. Loaded only behind `import.meta.env.DEV`; never in the production bundle.
+- **Source Log:** Maintenance/setup-log.md (Structural Change Log)

@@ -1,6 +1,7 @@
 // A Canvas 2D stand-in that records every call and property write, tracks save/restore, and
 // enforces the flat-art rule (no gradients, patterns, shadows or filters).
-export function recordingCtx() {
+// metrics (optional): { ascent, descent } in em, reported as fontBoundingBoxAscent/Descent.
+export function recordingCtx(metrics = null) {
   const log = [];
   const state = {
     fillStyle: '#000000', strokeStyle: '#000000', globalAlpha: 1, lineWidth: 1,
@@ -14,7 +15,9 @@ export function recordingCtx() {
     restore() { Object.assign(state, stack.pop() ?? {}); },
     measureText(s) {
       const size = parseFloat((/(\d+(?:\.\d+)?)px/.exec(state.font) ?? [0, 10])[1]);
-      return { width: String(s).length * size * 0.55, actualBoundingBoxAscent: size * 0.7, actualBoundingBoxDescent: size * 0.1 };
+      const m = { width: String(s).length * size * 0.55, actualBoundingBoxAscent: size * 0.7, actualBoundingBoxDescent: size * 0.1 };
+      if (metrics) { m.fontBoundingBoxAscent = size * metrics.ascent; m.fontBoundingBoxDescent = size * metrics.descent; }
+      return m;
     },
   };
   return new Proxy(api, {
