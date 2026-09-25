@@ -183,3 +183,108 @@ test('updraft dashes: 2 × 12 rounded, ink at 14 %', () => {
   expect(dashes.every((e) => e.args[2] === 2 && e.args[3] === 12 && e.args[4] === 1)).toBe(true);
   expect(calls(ctx, 'fill').every((e) => e.alpha === 0.14 && e.fill === '#26252E')).toBe(true);
 });
+
+import { config } from '../src/config.js';
+import { LEVELS } from '../src/levels/index.js';
+import { createWorld, startRoom, step } from '../src/sim/world.js';
+import { createEffects, handleEvent, updateEffects, titleFlipValue } from '../src/view/anim/effects.js';
+import { createParticles, spawn, drawParticles } from '../src/view/particles.js';
+import { drawObstacle } from '../src/view/art/obstacle.js';
+
+function liveWorld() {
+  const w = createWorld(LEVELS, config);
+  startRoom(w, 0, 0);
+  step(w, config.step, 0);
+  return w;
+}
+const alive = (fx) => fx.particles.items.filter((p) => p.alive);
+
+test('obstacle: neutral fill, 2 px ink stroke inside, doubled while flashing', () => {
+  const o = { left: 165, top: 258, w: 70, h: 14 };
+  const a = recordingCtx();
+  drawObstacle(a, o, 0, theme);
+  expect(calls(a, 'fillRect')[0]).toMatchObject({ args: [165, 258, 70, 14], fill: '#A9A4B5' });
+  expect(calls(a, 'strokeRect')[0]).toMatchObject({ args: [166, 259, 68, 12], lineWidth: 2, stroke: '#26252E' });
+  const b = recordingCtx();
+  drawObstacle(b, o, 0.5, theme);
+  expect(calls(b, 'strokeRect')[0]).toMatchObject({ args: [167, 260, 66, 10], lineWidth: 4 });
+});
+
+test('a flashing shaft post keeps a neutral core', () => {
+  const post = { left: 227, top: 0, w: 8, h: 52 };
+  const ctx = recordingCtx();
+  drawObstacle(ctx, post, 0.5, theme);
+  expect(calls(ctx, 'strokeRect')[0].lineWidth).toBe(3);             // capped at min(w, h) / 2 − 1
+});
+
+test('launch puff: 4 ink dots with the canvas sizes and alphas', () => {
+  const fx = createEffects(theme);
+  const w = liveWorld();
+  Object.assign(w.player.vel, { x: 100, y: -200 });
+  handleEvent(fx, 'launch', w);
+  const ps = alive(fx);
+  expect(ps).toHaveLength(4);
+  expect(ps.every((p) => p.color === '#26252E')).toBe(true);
+  expect(ps.map((p) => p.alpha)).toEqual([0.5, 0.35, 0.35, 0.2]);
+  expect(ps.map((p) => p.size)).toEqual([2.5, 2, 2, 1.5]);
+  expect(ps.every((p) => p.vy > 0)).toBe(true);                    // puffs trail behind an upward launch
+});
+
+test('death burst: 8 dots alternating ink and player colour at 70 %', () => {
+  const fx = createEffects(theme);
+  const w = liveWorld();
+  w.player.pol = -1;
+  handleEvent(fx, 'death', w);
+  const ps = alive(fx);
+  expect(ps).toHaveLength(8);
+  expect(ps.map((p) => p.color)).toEqual(['#26252E', '#E27D7D', '#26252E', '#E27D7D', '#26252E', '#E27D7D', '#26252E', '#E27D7D']);
+  expect(ps.every((p) => p.alpha === 0.7)).toBe(true);
+  expect(ps.map((p) => p.size)).toEqual([2, 2, 2, 2, 2, 2, 1.35, 1.35]);
+});
+
+test('particle alpha multiplies into the stepped fade', () => {
+  const pool = createParticles();
+  spawn(pool, 0, 0, 0, 0, 1, '#26252E', 2, 0.5);
+  const ctx = recordingCtx();
+  drawParticles(ctx, pool);
+  expect(calls(ctx, 'fill')[0].alpha).toBe(0.5);                    // full life: step 1 × 0.5
+});
+
+test('the trail samples every 10 units of travel and keeps 3', () => {
+  const fx = createEffects(theme);
+  const w = liveWorld();
+  for (let i = 0; i < 100; i++) {
+    w.player.pos.y -= 1;                                             // 1 unit per frame
+    updateEffects(fx, 1 / 60, w);
+  }
+  const tr = fx.trail;
+  expect(tr.count).toBe(3);
+  const ys = [0, 1, 2].map((i) => tr.y[(tr.head - 1 - i + 3) % 3]);
+  expect(ys[1] - ys[0]).toBeCloseTo(10);
+  expect(ys[2] - ys[1]).toBeCloseTo(10);
+  handleEvent(fx, 'roomStart', w);                                   // a new attempt starts a fresh trail
+  expect(fx.trail.count).toBe(0);
+  expect(fx.trail.has).toBe(false);
+});
+
+test('a title tap starts the logo flip timer', () => {
+  const fx = createEffects(theme);
+  expect(titleFlipValue(fx)).toBe(1);                                // F upside down at rest
+  handleEvent(fx, 'titleTap', liveWorld());
+  expect(fx.titleFlip).toBe(config.timing.titleFlipTime);           // same clock game.js waits on
+  expect(fx.titleFlipped).toBe(false);
+});
+
+test('a tap mid-flip reverses from the current angle, with no jump', () => {
+  const fx = createEffects(theme);
+  const w = liveWorld();
+  handleEvent(fx, 'toTitle', w);
+  updateEffects(fx, config.timing.titleFlipTime / 4, w);             // a quarter in (ease-out back overshoots past halfway)
+  const before = titleFlipValue(fx);
+  expect(before).toBeGreaterThan(0);
+  expect(before).toBeLessThan(1);
+  handleEvent(fx, 'titleTap', w);
+  expect(titleFlipValue(fx)).toBeCloseTo(before, 6);
+  updateEffects(fx, config.timing.titleFlipTime, w);
+  expect(titleFlipValue(fx)).toBe(1);
+});

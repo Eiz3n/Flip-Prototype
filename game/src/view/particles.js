@@ -4,18 +4,18 @@ export const POOL_SIZE = 200;
 export function createParticles() {
   const items = [];
   for (let i = 0; i < POOL_SIZE; i++) {
-    items.push({ alive: false, x: 0, y: 0, vx: 0, vy: 0, life: 0, maxLife: 1, color: '#000', size: 2 });
+    items.push({ alive: false, x: 0, y: 0, vx: 0, vy: 0, life: 0, maxLife: 1, color: '#26252E', size: 2, alpha: 1 });
   }
   return { items, next: 0 };
 }
 
-export function spawn(pool, x, y, vx, vy, life, color, size) {
+export function spawn(pool, x, y, vx, vy, life, color, size, alpha = 1) {
   const p = pool.items[pool.next];
   pool.next = (pool.next + 1) % POOL_SIZE;
   p.alive = true;
   p.x = x; p.y = y; p.vx = vx; p.vy = vy;
   p.life = life; p.maxLife = life;
-  p.color = color; p.size = size;
+  p.color = color; p.size = size; p.alpha = alpha;
 }
 
 export function burst(pool, x, y, count, speed, life, color, size) {
@@ -36,11 +36,11 @@ export function updateParticles(pool, dt) {
   }
 }
 
-// Opacity in four hard steps — flat look, no smooth fade (spec §4 / TDD visual rule).
+// Opacity = the particle's own alpha × a four-step fade over its life (flat look, no smooth fade).
 export function drawParticles(ctx, pool) {
   for (const p of pool.items) {
     if (!p.alive) continue;
-    ctx.globalAlpha = Math.ceil((p.life / p.maxLife) * 4) / 4;
+    ctx.globalAlpha = p.alpha * (Math.ceil((p.life / p.maxLife) * 4) / 4);
     ctx.fillStyle = p.color;
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);

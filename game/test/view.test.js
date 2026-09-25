@@ -70,12 +70,3 @@ test('latch pop and flip ring run for their theme time, then clear', () => {
   expect(fx.latchPop.size).toBe(0);
   expect(fx.flipRing.t).toBe(0);
 });
-
-test('the trail keeps at most trailDots samples', () => {
-  const fx = createEffects(theme);
-  const w = liveWorld();
-  for (let i = 0; i < 100; i++) updateEffects(fx, theme.fx.trailInterval, w);
-  expect(fx.trail.count).toBe(theme.fx.trailDots);
-  handleEvent(fx, 'roomStart', w);
-  expect(fx.trail.count).toBe(0);
-});
