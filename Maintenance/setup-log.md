@@ -193,6 +193,18 @@ Append every structural change. Dual-written with `Commands and Logs/directory-l
 - **Reason:** Dev plan Task 11 — view core; the view reads sim state and never changes it.
 - **Linkages/References affected:** `game/README.md` "Where things live" names `src/view/anim/effects.js`. Not in any GPS index.
 
+### [25-09-26 15:00] — CREATED | game/src/view/art/
+- **Action:** Added the blockout art folder: one module per drawable (`marks`, `walls`, `shaft`, `hookPoint`, `player`, `obstacle`, `updraft`, `hud`, `logo`).
+- **Location:** `game/src/view/art/`
+- **Reason:** Dev plan Task 12 — gives the Art & Design plan one file per asset to own.
+- **Linkages/References affected:** `game/README.md` "Where things live" names `src/view/art/`. The art plan replaces these bodies. Not in any GPS index.
+
+### [25-09-26 15:00] — CREATED | .claude/
+- **Action:** Added `.claude/launch.json` with a `flip-dev` entry (`npm run dev --prefix game`, port 5173).
+- **Location:** `.claude/`
+- **Reason:** Dev plan Task 12 Step 9 — runs the dev server in the Claude desktop browser pane for the browser checks.
+- **Linkages/References affected:** Used by the preview tooling only. Not in any GPS index.
+
 ---
 
 ## Reinstall History

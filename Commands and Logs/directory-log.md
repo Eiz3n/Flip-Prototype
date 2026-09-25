@@ -154,3 +154,15 @@ Append-only master history of all events in the Flip-Prototype directory.
 - **Location:** game/src/view/
 - **Reason:** Dev plan Task 11 — view core; the view reads sim state and never changes it.
 - **Source Log:** Maintenance/setup-log.md (Structural Change Log)
+
+### [25-09-26 15:00] — CREATED | game/src/view/art/
+- **Action:** Added the blockout art folder: one module per drawable (`marks`, `walls`, `shaft`, `hookPoint`, `player`, `obstacle`, `updraft`, `hud`, `logo`).
+- **Location:** game/src/view/art/
+- **Reason:** Dev plan Task 12 — gives the Art & Design plan one file per asset to own.
+- **Source Log:** Maintenance/setup-log.md (Structural Change Log)
+
+### [25-09-26 15:00] — CREATED | .claude/
+- **Action:** Added `.claude/launch.json` with a `flip-dev` entry (`npm run dev --prefix game`, port 5173).
+- **Location:** .claude/
+- **Reason:** Dev plan Task 12 Step 9 — runs the dev server in the Claude desktop browser pane for the browser checks.
+- **Source Log:** Maintenance/setup-log.md (Structural Change Log)

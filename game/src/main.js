@@ -1,0 +1,92 @@
+// Boot: canvas + DPR-capped letterbox, fixed-step loop, visibility pause.
+import { config } from './config.js';
+import { theme } from './theme.js';
+import { LEVELS } from './levels/index.js';
+import { validateLevels } from './levels/validate.js';
+import { createGame, tap, update } from './game.js';
+import { bindInput } from './input.js';
+import { createCamera, shake, updateCamera } from './view/camera.js';
+import { createEffects, handleEvent, updateEffects } from './view/anim/effects.js';
+import { renderFrame } from './view/render.js';
+import { loadFonts } from './view/fonts.js';
+
+if (import.meta.env.DEV) validateLevels(LEVELS, config);
+
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const view = { scale: 1, offsetX: 0, offsetY: 0, dpr: 1 };
+
+function safeStorage() {
+  try { return window.localStorage; } catch { return null; }
+}
+
+const fx = createEffects(theme);
+const cam = createCamera();
+const game = createGame({
+  levels: LEVELS,
+  cfg: config,
+  storage: safeStorage(),
+  onEvent: (e) => handleEvent(fx, e, game.world),
+});
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, theme.render.maxDpr);
+  const w = window.innerWidth, h = window.innerHeight;
+  canvas.width = Math.round(w * dpr);
+  canvas.height = Math.round(h * dpr);
+  const R = config.room;
+  view.scale = Math.min(w / R.width, h / R.height);
+  view.offsetX = (w - R.width * view.scale) / 2;
+  view.offsetY = (h - R.height * view.scale) / 2;
+  view.dpr = dpr;
+}
+
+function draw(alpha) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.fillStyle = theme.color.background;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const s = view.scale * view.dpr;
+  ctx.setTransform(s, 0, 0, s, view.offsetX * view.dpr, view.offsetY * view.dpr);
+  renderFrame(ctx, game, fx, cam, alpha);
+}
+
+let last = 0, acc = 0, running = false, rafId = 0;
+
+function frame(now) {
+  // The first rAF timestamp can be earlier than the performance.now() taken in start().
+  const dt = Math.max(0, Math.min((now - last) / 1000, config.maxFrameDelta));
+  last = now;
+  acc += dt;
+  while (acc >= config.step) {
+    update(game, config.step);
+    updateEffects(fx, config.step * game.timeScale, game.world);
+    acc -= config.step;
+  }
+  if (fx.shakeRequest.time > 0) {
+    shake(cam, fx.shakeRequest.amount, fx.shakeRequest.time);
+    fx.shakeRequest.amount = 0;
+    fx.shakeRequest.time = 0;
+  }
+  updateCamera(cam, game, dt);
+  draw(acc / config.step);
+  rafId = requestAnimationFrame(frame);
+}
+
+function start() {
+  if (running) return;
+  running = true;
+  last = performance.now();
+  acc = 0;
+  rafId = requestAnimationFrame(frame);
+}
+
+function stop() {
+  running = false;
+  cancelAnimationFrame(rafId);
+}
+
+window.addEventListener('resize', resize);
+document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+resize();
+bindInput(canvas, window, () => tap(game));
+loadFonts(theme.font).finally(start);
