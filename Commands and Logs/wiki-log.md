@@ -11,3 +11,6 @@ Added safe-area padding, canvas-box scaling, disabled tap gestures and multi-tou
 
 ## [25-09-26] update | Collision & input — real-phone touch confirmed
 Recorded user's real-phone test: touch input works; notch padding and timing feel still unverified on hardware.
+
+## [25-09-26] update | Collision & input — test device recorded
+Recorded Samsung Galaxy S22+ (hole-punch) as the touch test device; safe-area padding still unproven on hardware, timing feel still open.

@@ -53,7 +53,7 @@ Implementation detail in `game/index.html` and `game/src/main.js`, not from the 
 - **Scaling reads the canvas box, not the window:** `resize()` fits the 360 × 640 room into `canvas.clientWidth × clientHeight`, i.e. inside the safe area.
 - **No browser gestures on a tap:** `user-select: none`, `-webkit-touch-callout: none` (iOS long-press menu), `-webkit-tap-highlight-color: transparent` and `overscroll-behavior: none` (pull-to-refresh).
 - **Multi-touch:** each new finger fires its own `pointerdown`, so a two-finger tap flips twice. Accepted as-is.
-- Checked in a 375 × 812 phone emulation with simulated notch insets. **Touch input confirmed working on a real phone** (25-09-26, user test; device not recorded). Still open: safe-area padding on a real notched device, and whether flip timing feels right — see the touch-latency risk in [Milestones & risks](../systems/milestones-and-risks.md).
+- Checked in a 375 × 812 phone emulation with simulated notch insets. **Touch input confirmed working on a real phone** (25-09-26, user test on a Samsung Galaxy S22+, hole-punch front camera). In a normal Chrome tab on Android the cutout sits inside the status bar, so the safe-area insets are most likely 0 there and the padding is only exercised in fullscreen or when installed as a home-screen app. Still open: safe-area padding in fullscreen or on an iPhone, and whether flip timing feels right — see the touch-latency risk in [Milestones & risks](../systems/milestones-and-risks.md).
 
 ### Tap buffering
 
@@ -107,3 +107,7 @@ Owned by `src/camera.js`.
 - **Added:** User confirmed touch input works on a real phone.
 - **Removed:** "not yet checked on a real device" claim.
 - **Notes:** Device, notch and timing feel not reported, so safe-area padding on real hardware and the latency feel stay listed as open.
+
+### [25-09-26] — Test device recorded
+- **Added:** Device (Samsung Galaxy S22+, hole-punch camera); note that a normal Android Chrome tab most likely reports zero safe-area insets.
+- **Notes:** The hole-punch test does not prove the padding works, so it stays open (fullscreen or iPhone). Timing feel still not reported.

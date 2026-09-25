@@ -202,3 +202,9 @@ Append-only master history of all events in the Flip-Prototype directory.
 - **Location:** wiki/concepts/collision-and-input.md
 - **Reason:** User tested on a real phone: touch works fine.
 - **Source Log:** Commands and Logs/wiki-log.md
+
+### [25-09-26 20:12] — EDITED | wiki/concepts/collision-and-input.md
+- **Action:** Recorded the test device (Samsung Galaxy S22+, hole-punch); noted a normal Android Chrome tab most likely reports zero safe-area insets.
+- **Location:** wiki/concepts/collision-and-input.md
+- **Reason:** User supplied device details for the real-phone touch test.
+- **Source Log:** Commands and Logs/wiki-log.md
