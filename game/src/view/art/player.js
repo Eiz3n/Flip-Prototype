@@ -17,9 +17,11 @@ export function drawTether(ctx, x, y, hook, theme) {
 
 function drawTrail(ctx, fx, theme) {
   const tr = fx.trail, f = theme.fx;
-  const n = Math.min(tr.count, f.trailRadii.length);
+  // Skip the newest sample: it is 0–10 units behind and hidden under the player's disc, so the
+  // drawn dots sit 10–20 / 20–30 / 30–40 behind, as on the canvas (about 13 / 23 / 32).
+  const n = Math.min(tr.count - 1, f.trailRadii.length);
   for (let i = 0; i < n; i++) {
-    const idx = (tr.head - 1 - i + tr.x.length) % tr.x.length;   // newest first
+    const idx = (tr.head - 2 - i + 2 * tr.x.length) % tr.x.length;   // second newest first
     ctx.globalAlpha = f.trailAlphas[i];
     ctx.fillStyle = polColor(theme, tr.pol[idx]);
     ctx.beginPath();

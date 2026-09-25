@@ -31,7 +31,7 @@ function tickMap(map, dt) {
 }
 
 export function createEffects(theme) {
-  const n = theme.fx.trailDots;
+  const n = theme.fx.trailDots + 1;   // one extra: the newest sample sits under the player and is not drawn
   return {
     theme,
     time: 0,

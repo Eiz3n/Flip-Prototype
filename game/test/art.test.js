@@ -54,7 +54,7 @@ function hookAt(pol) { return { pos: { x: 100, y: 200 }, pol, fieldRadius: 70 };
 
 function fxStub(overrides = {}) {
   return {
-    trail: { x: new Float32Array(3), y: new Float32Array(3), pol: new Int8Array(3), count: 0, head: 0 },
+    trail: { x: new Float32Array(4), y: new Float32Array(4), pol: new Int8Array(4), count: 0, head: 0 },
     flipRing: { t: 0 },
     ...overrides,
   };
@@ -96,12 +96,14 @@ test('latch pop peaks at 1.1× halfway through', () => {
 
 test('player: r 8 body, stroke inside at 7, 10 px mark, 3-dot stepped trail', () => {
   const fx = fxStub();
-  fx.trail.x.set([100, 100, 100]); fx.trail.y.set([230, 220, 210]); fx.trail.pol.set([1, 1, 1]);
-  fx.trail.count = 3; fx.trail.head = 0;               // newest at index 2
+  fx.trail.x.set([100, 100, 100, 100]); fx.trail.y.set([240, 230, 220, 210]); fx.trail.pol.set([1, 1, 1, 1]);
+  fx.trail.count = 4; fx.trail.head = 0;               // newest at index 3 (y 210)
   const ctx = recordingCtx();
   drawPlayer(ctx, 100, 200, { pol: +1 }, fx, theme);
   const r = radii(ctx);
-  expect(r.slice(0, 3)).toEqual([4, 3.5, 3]);          // newest (largest) first
+  expect(r.slice(0, 3)).toEqual([4, 3.5, 3]);          // largest first
+  // The newest sample (0–10 behind, under the player) is skipped: dots start one spacing back.
+  expect(calls(ctx, 'arc').slice(0, 3).map((e) => e.args[1])).toEqual([220, 230, 240]);
   expect(calls(ctx, 'fill').slice(0, 3).map((e) => e.alpha)).toEqual([0.55, 0.35, 0.2]);
   expect(r).toEqual(expect.arrayContaining([8, 7]));
   expect(calls(ctx, 'fillText')[0].font).toBe(`700 10px ${theme.font.family}`);
@@ -250,7 +252,7 @@ test('particle alpha multiplies into the stepped fade', () => {
   expect(calls(ctx, 'fill')[0].alpha).toBe(0.5);                    // full life: step 1 × 0.5
 });
 
-test('the trail samples every 10 units of travel and keeps 3', () => {
+test('the trail samples every 10 units of travel and keeps one more than it draws', () => {
   const fx = createEffects(theme);
   const w = liveWorld();
   for (let i = 0; i < 100; i++) {
@@ -258,10 +260,11 @@ test('the trail samples every 10 units of travel and keeps 3', () => {
     updateEffects(fx, 1 / 60, w);
   }
   const tr = fx.trail;
-  expect(tr.count).toBe(3);
-  const ys = [0, 1, 2].map((i) => tr.y[(tr.head - 1 - i + 3) % 3]);
-  expect(ys[1] - ys[0]).toBeCloseTo(10);
-  expect(ys[2] - ys[1]).toBeCloseTo(10);
+  const n = theme.fx.trailDots + 1;
+  expect(tr.x.length).toBe(n);
+  expect(tr.count).toBe(n);
+  const ys = [0, 1, 2, 3].map((i) => tr.y[(tr.head - 1 - i + n) % n]);
+  for (let i = 1; i < n; i++) expect(ys[i] - ys[i - 1]).toBeCloseTo(10);
   handleEvent(fx, 'roomStart', w);                                   // a new attempt starts a fresh trail
   expect(fx.trail.count).toBe(0);
   expect(fx.trail.has).toBe(false);

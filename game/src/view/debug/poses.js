@@ -41,8 +41,8 @@ const poses = {
     p.latched = null;
     place(p, 265, 540);
     const tr = fx.trail;
-    [572, 563, 553].forEach((y, i) => { tr.x[i] = 265; tr.y[i] = y; tr.pol[i] = -1; });
-    tr.head = 0; tr.count = 3;                         // newest = index 2 = y 553
+    [572, 563, 553, 543].forEach((y, i) => { tr.x[i] = 265; tr.y[i] = y; tr.pol[i] = -1; });
+    tr.head = 0; tr.count = 4;                         // newest (index 3, under the player) is not drawn
     game.runTime = 41.9;
     game.deaths = 3;
   },
