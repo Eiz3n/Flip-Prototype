@@ -129,6 +129,8 @@ game/
 8. Debug poses and side-by-side check against the canvas
 9. Accessibility, size, performance and handover
 
+Each task ends with a **Phase N checklist** placed just before its commit step. It lists what must exist and work before the phase counts as done: red seen, files and behaviours present, the running test total, and any browser check. Tick every box and copy the results into the task report; an unticked box blocks the next task.
+
 ---
 
 ### Task 1: Font asset — download, subset, licence, loader check
@@ -230,6 +232,16 @@ Start the dev server (the dev plan's `.claude/launch.json` entry), open the game
 ```
 
 Expected: one entry, `['loaded', '400 800']`. (`document.fonts.check()` is not enough: it returns `true` when no matching face is registered at all.) `read_network_requests` with `urlPattern: 'baloo2'` shows one request, status 200. The font decode warning the dev plan noted is gone (`read_console_messages`, `onlyErrors: true`, returns nothing).
+
+**Phase 1 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 2 until every box is ticked and the results are in the task report.
+
+- [ ] The user approved the download (filename, source and size given) before anything was fetched.
+- [ ] The download landed in a scratch folder outside the repo; the subset was made with `py -3 -m fontTools.subset`.
+- [ ] `public/fonts/baloo2-subset.woff2` is within budget, `OFL.txt` sits beside it, and `public/fonts/.gitkeep` is gone.
+- [ ] `tools/subset-font.md` holds a recipe someone else could re-run.
+- [ ] The structural changes are logged in both `directory-log.md` and `setup-log.md`.
+- [ ] Red seen, then green: fonts (2) + every dev test pass.
+- [ ] Browser: `document.fonts` shows `['loaded', '400 800']`; one `baloo2` request with status 200; no console errors (the dev plan's font warning is gone).
 
 - [ ] **Step 9: Commit**
 
@@ -494,6 +506,15 @@ export const theme = deepFreeze({
 Run: `cd game && npm test`
 Expected: PASS — art (4), fonts (2), plus every dev test. `view.test.js` still passes because the trail is still time-sampled until Task 5.
 
+**Phase 2 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 3 until every box is ticked and the results are in the task report.
+
+- [ ] `recordingCtx.js` and `scenes.js` exist; the play-through reaches every drawing path.
+- [ ] Red seen: `theme carries the canvas tokens` failed on `logoSize` (72 ≠ 96) before the rewrite.
+- [ ] Every row of the Canvas → code token table has its value in `theme.js`.
+- [ ] Every existing key is kept, including the compat keys `chevronSpacing`, `markScale`, `trailInterval` and `particleSize`.
+- [ ] Guards pass: palette colours only, no gradients, `globalAlpha` within 0..1.
+- [ ] Green: art (4) + fonts (2) + every dev test, 0 failed.
+
 - [ ] **Step 7: Commit**
 
 ```bash
@@ -747,6 +768,17 @@ Expected: PASS — art (10) plus everything earlier. In the player test the newe
 - [ ] **Step 7: Look at it**
 
 Run the dev server, play room 1 in the browser pane, and take a zoomed screenshot (`computer` `zoom`) around a hook point and the player. Check: the marks are centred in their discs; the stroke sits inside the disc edge; the trail shows three shrinking, fading dots in the player's colour.
+
+**Phase 3 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 4 until every box is ticked and the results are in the task report.
+
+- [ ] Red seen: 4 of the 6 new tests failed (marks, hook point, latch pop, player).
+- [ ] Marks are Baloo 2 glyphs `+` and U+2212 in ink, at `font.markPlayer` 10 / `font.markHook` 17.
+- [ ] Strokes sit inside the radius: hook fill r 14, stroke r 13; player fill r 8, stroke r 7.
+- [ ] Field ring differs between idle and player inside; latch pop peaks at 1.1× halfway.
+- [ ] Flip ring grows from the player edge and fades; tether is 1 px ink at 50 %; trail shows 3 stepped dots.
+- [ ] `drawHookDisc` is exported for Task 7.
+- [ ] Green: art (10) + everything earlier, 0 failed.
+- [ ] Zoomed look recorded: marks centred, stroke inside the disc edge, 3 shrinking, fading dots.
 
 - [ ] **Step 8: Commit**
 
@@ -1016,6 +1048,16 @@ Expected: PASS — art (15) plus everything earlier.
 - [ ] **Step 7: Look at it**
 
 In the browser pane, zoom on room 1's doorway and hatch (`computer` `zoom`, region around x 220–310, y 0–110). Check against the canvas Room 1 artboard: the top-wall gap sits exactly between the posts' outer edges; the posts run past the ink interior by 6; the chevrons rise and fade; the dashed cue fans out from the posts' outer feet.
+
+**Phase 4 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 5 until every box is ticked and the results are in the task report.
+
+- [ ] Red seen: 4 of the 5 new tests failed.
+- [ ] Walls: full-height side bands split at the front, no ink edge, cut-outs for doorway and hatch, full-width front line.
+- [ ] Exit doorway matches the geometry table: interior 46 deep, posts to the mouth (y 0–52), 4-slot chevrons rising, brightest at the bottom, dashed pull cue.
+- [ ] The entry hatch mirrors the doorway in the floor (posts y 588–640).
+- [ ] Updraft dashes are 2 × 12, rounded, ink at 14 %.
+- [ ] Green: art (15) + everything earlier, 0 failed.
+- [ ] Zoomed look against the Room 1 artboard recorded: wall gap between post outer edges, posts 6 past the interior, cue from the posts' outer feet.
 
 - [ ] **Step 8: Commit**
 
@@ -1321,6 +1363,17 @@ Expected: PASS — art (23), view (6) plus everything else. The dev test `'death
 
 Play room 1 in the browser pane; die on a wall once and launch off a hook a few times. Check: puffs are small ink dots behind the launch; the death burst is a ring of eight alternating ink and colour dots; the trail shows three dots about 10 apart; obstacle outlines thicken briefly on contact.
 
+**Phase 5 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 6 until every box is ticked and the results are in the task report.
+
+- [ ] Red seen: all 8 new tests failed.
+- [ ] Obstacle: neutral fill, 2 px ink stroke inside, doubled while flashing; a flashing shaft post keeps a neutral core.
+- [ ] `spawn` takes an optional `alpha`; every older call still works; `drawParticles` multiplies alpha into the stepped fade.
+- [ ] Launch puff: 4 ink dots with the canvas sizes and alphas. Death burst: 8 dots alternating ink and player colour at 70 %.
+- [ ] Trail samples every 10 units of travel and keeps 3; the old time-based trail test in `view.test.js` is deleted.
+- [ ] A title tap starts the logo flip timer; `titleFlipValue` is exported; a mid-flip tap reverses with no jump.
+- [ ] Green: art (23) + view (6) + everything else, 0 failed.
+- [ ] Look recorded: small ink puffs, 8-dot burst ring, trail dots about 10 apart, obstacle outline thickens on contact.
+
 - [ ] **Step 9: Commit**
 
 ```bash
@@ -1466,6 +1519,17 @@ Expected: PASS — art (27), render (2) plus everything else.
 - [ ] **Step 6: Look at it**
 
 In the browser pane, play for 20 s and watch the timer: the digits must not shift sideways as they change. Clear room 1: `1 / 2` pops once, then the row reads `2 / 2`.
+
+**Phase 6 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 7 until every box is ticked and the results are in the task report.
+
+- [ ] `render.test.js` `formatTime` expectations updated to tenths.
+- [ ] Red seen: `formatTime(0)` gave `'0:00.00'` and `drawTabular` was not exported.
+- [ ] `formatTime` gives `m:ss.t` (`0:18.4`, `1:02.7`).
+- [ ] `drawTabular` puts every character in a fixed-width cell centred on `cx`.
+- [ ] HUD row centre y 24: room label left at x 20 (700 13 px), timer centred at x 180 (700 15 px), `× n` right at x 340 (700 13 px); the room label clears room 2's doorway.
+- [ ] The room number pops while `roomPop` runs.
+- [ ] Green: art (27) + render (2) + everything else, 0 failed.
+- [ ] Look recorded: timer digits don't shift over 20 s; `1 / 2` pops once, then reads `2 / 2`.
 
 - [ ] **Step 7: Commit**
 
@@ -1772,6 +1836,16 @@ Expected: PASS — art (32) plus everything else, including the palette guard ov
 
 In the browser pane: the title shows four bobbing hooks, the logo with the F upside down, and the canvas copy. Play through to the win screen and check the panel; tap back to the title and watch the F turn over.
 
+**Phase 7 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 8 until every box is ticked and the results are in the task report.
+
+- [ ] `theme.font.lineHeight` added; `tabularWidth` exported from `hud.js`.
+- [ ] Red seen: the 5 new tests failed.
+- [ ] Logo: `F l i p` drawn letter by letter, 800 96 px, tracking −2; F rotated by `flip × π`; `true` / `false` still work.
+- [ ] Title: four bobbing idle hooks with faint rings, canvas copy, best time shown via `formatTime`.
+- [ ] Win: `Cleared`, rounded neutral panel with 3 rows, `New best` only when beaten, `tap to return` at a fixed position.
+- [ ] Green: art (32) + everything else (including the palette guard over the new screens), 0 failed.
+- [ ] Look recorded: the title tap plays the full F flip before room 1 appears; returning from win flips it back.
+
 - [ ] **Step 8: Commit**
 
 ```bash
@@ -2010,6 +2084,17 @@ Expected leftovers, which are not bugs: the updraft dash positions (the canvas p
 
 Append `CREATED | game/src/view/debug/` (dev-only pose and colour-blind tools, never in the production bundle) to both `Commands and Logs/directory-log.md` and `Maintenance/setup-log.md` (Structural Change Log).
 
+**Phase 8 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 9 until every box is ticked and the results are in the task report.
+
+- [ ] Red seen: `Failed to resolve import "../src/view/debug/poses.js"`.
+- [ ] `?pose=room1|room2|title|win` renders each pose; unknown names are refused. `?cb=protan|deutan|tritan` applies the filter.
+- [ ] Both hooks load only in dev: a production build contains no `debug/` code (grep `dist/assets/*.js` for `pose` / `colourBlind`).
+- [ ] The difference table covers all four poses; every gap over 1 unit is fixed in `theme.js`, or in an art module with a new pinning test, or listed as an expected leftover.
+- [ ] Death burst scale judged against puff and trail; the result (kept, or ×1.5 with the test updated) is recorded.
+- [ ] Viewport reset to `desktop`; the canvas server on port 5180 is stopped.
+- [ ] `CREATED | game/src/view/debug/` logged in both `directory-log.md` and `setup-log.md`.
+- [ ] Green: art (34) + everything else, 0 failed.
+
 - [ ] **Step 8: Commit**
 
 ```bash
@@ -2072,6 +2157,17 @@ Include:
 4. Confirmation that the title tap shows the full F flip before room 1 appears, and that returning from the win screen flips it back.
 5. The death-burst scale result from Task 8 Step 7.7.
 
+**Phase 9 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. This is the plan's final gate.
+
+- [ ] The compat-key grep matched only `theme.js` before deletion; all four keys are gone.
+- [ ] Full suite: 119 tests (dev 83 after Task 5's trail swap, art 34, fonts 2), 0 failures.
+- [ ] Colour-blind: marks pass under deutan, protan and tritan; side-band result reported, and the user was asked if the bands were hard to tell apart.
+- [ ] Size check `OK` (under 204 800 bytes); total and font share recorded.
+- [ ] Frame rate ≥ 58 fps with final art; the number is recorded.
+- [ ] `game/README.md` has the `## Art` section above its Decision Log, plus a new log entry.
+- [ ] The report to the user covers all five items in Step 7.
+- [ ] Spec done-when line 3 (visuals use the canvas tokens) is now pass, with the Task 8 table as evidence.
+
 - [ ] **Step 8: Commit**
 
 ```bash
@@ -2129,3 +2225,7 @@ git commit -m "chore(art): retire compat theme keys; document art tools"
 - **Added:** `theme.shaft.chevronSpacing` kept as a compat key through Tasks 2–3, because the blockout `shaft.js` reads it until Task 4 replaces it. Task 9 Step 1 now retires it with the other compat keys.
 - **Removed:** —
 - **Notes:** The subagent re-ran the updated plan from a clean dev baseline. Tasks 2 and 3 went red on `globalAlpha stays within 0..1` (NaN alpha from the missing key); this entry fixes that. Task 4's fail-first count is corrected to 4 of 5. Every other finding was confirmed resolved; totals 4 / 10 / 15 / 23 / 27 / 32 / 34, build 32.7 KB with the stand-in font. Accepted as is: the entering chevron shows a 0.8-unit sliver at the bottom edge of the shaft. Lowering `base` would move all three visible chevrons off the canvas centres (36.8 / 23.0 / 9.2).
+
+### [25-09-26] — Per-phase checklists added
+- **Added:** A Phase N checklist before the commit step of all 9 tasks (red seen, canvas values, cumulative art totals 4 → 34 and final 119, look checks, dev-only debug code absent from the build); a note under Tasks explaining the gate.
+- **Notes:** User request: a per-phase checklist so every item is confirmed built and working before the next task starts.

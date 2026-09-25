@@ -177,6 +177,8 @@ export function updateEffects(fx, dt, world)
 12. Blockout art modules, `render.js`, screens, fonts, `main.js`
 13. Build, size and performance check
 
+Each task ends with a **Phase N checklist** placed just before its commit step. It lists what must exist and work before the phase counts as done: red seen, files and behaviours present, the running test total, and any browser check. Tick every box and copy the results into the task report; an unticked box blocks the next task.
+
 ---
 
 ### Task 1: Scaffold `game/`, README map, purity test
@@ -323,6 +325,16 @@ Contents (plain Markdown):
 - [ ] **Step 9b: Log the new tree**
 
 Append `CREATED | game/` (Vite project: `src/sim/`, `public/fonts/`, `test/`) to both `Commands and Logs/directory-log.md` and `Maintenance/setup-log.md` (Structural Change Log), in their existing formats.
+
+**Phase 1 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 2 until every box is ticked and the results are in the task report.
+
+- [ ] `game/package.json` has the `dev`, `build`, `preview`, `test` and `test:watch` scripts; `vite` and `vitest` are in `devDependencies`; `package-lock.json` exists.
+- [ ] `vite.config.js` sets `base: './'`; `.gitignore` lists `node_modules/` and `dist/`, and `git status` shows neither.
+- [ ] `index.html` exists; `src/sim/.gitkeep` and `public/fonts/.gitkeep` exist.
+- [ ] Red seen: the purity test failed with `ENOENT` before the folders existed.
+- [ ] Green: `npm test` reports 1 passed, 0 failed.
+- [ ] `game/README.md` has the tree map, "Add a room", "Change how something looks" and a Decision Log block.
+- [ ] `CREATED | game/` is in both `Commands and Logs/directory-log.md` and `Maintenance/setup-log.md`.
 
 - [ ] **Step 10: Commit**
 
@@ -564,6 +576,14 @@ export const theme = deepFreeze({
 Run: `cd game && npx vitest run test/config.test.js`
 Expected: PASS (4 tests)
 
+**Phase 2 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 3 until every box is ticked and the results are in the task report.
+
+- [ ] Red seen: `Failed to resolve import "../src/config.js"`.
+- [ ] `deepFreeze.js`, `config.js` and `theme.js` exist; writing to any nested key of `config` or `theme` throws.
+- [ ] `config.js` holds the full TDD tuning table, the room / shaft geometry, `timing` (`titleFlipTime` 0.25, `dyingTime` 0.6, `readyBeat` 0.5, `panTime` 0.4) and `stallTime` 3 / `stallSpeed` 5.
+- [ ] `theme.js` holds every blockout visual value from spec §4 and the font stack; no colour or size literal is left for the view to hard-code.
+- [ ] Green: config (4) + purity (1) = 5 passed, 0 failed.
+
 - [ ] **Step 7: Commit**
 
 ```bash
@@ -685,6 +705,14 @@ export function wallPolAt(room, y) {
 
 Run: `cd game && npx vitest run`
 Expected: PASS — wave (5), config (4), purity (1)
+
+**Phase 3 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 4 until every box is ticked and the results are in the task report.
+
+- [ ] Red seen: `Failed to resolve import "../src/sim/wave.js"`.
+- [ ] `wave.js` uses `n = floor(t/T − s/H) + 1`, `p = p₀·(−1)ⁿ`; `wallPolAt` ignores time when the wave is off.
+- [ ] `vec.js` helpers write into their target and allocate nothing.
+- [ ] The purity test still passes with the two new sim files.
+- [ ] Green: wave (5) + config (4) + purity (1) = 10 passed, 0 failed.
 
 - [ ] **Step 6: Commit**
 
@@ -1124,6 +1152,17 @@ Why each test case trips its rule: hook (100, 300) → 100 − 70 − 10 = 20 < 
 Run: `cd game && npx vitest run`
 Expected: PASS — room (3), levels (5), plus earlier files. If `both v1 rooms pass every authoring rule` fails, **stop**: the spec's room data breaks a rule. Report the message to the user; do not edit room data without their approval.
 
+**Phase 4 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 5 until every box is ticked and the results are in the task report.
+
+- [ ] Red seen: both `room.js` and `levels/index.js` imports failed.
+- [ ] One file per room: `room-01-sidestep.js`, `room-02-cluster.js`; room order lives only in `levels/index.js`.
+- [ ] Shaft posts are built from entry / exit x and end at the mouth line: exit posts y 0–52, hatch posts y 588–640.
+- [ ] Hook points bob in a figure eight with staggered phases; `reset` rewinds time, cooldowns and bob.
+- [ ] `validate.js` reports every spec §6 rule with the room index; both v1 rooms pass; room n+1's entry sits under room n's exit.
+- [ ] If the authoring-rule test failed, you stopped and reported it to the user instead of editing room data.
+- [ ] `src/sim/.gitkeep` is deleted.
+- [ ] Green: room (3) + levels (5) + earlier = 18 passed, 0 failed.
+
 - [ ] **Step 10: Commit**
 
 ```bash
@@ -1431,6 +1470,16 @@ export function freeFlightStep(state, dt) {
 Run: `cd game && npx vitest run test/physics.test.js`
 Expected: PASS (10 tests). If `a pulled player reaches the wall` fails, print the final `pos.x` — the likely cause is a sign error in the pull formula (the player drifting to the centre instead).
 
+**Phase 5 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 6 until every box is ticked and the results are in the task report.
+
+- [ ] Red seen: `Failed to resolve import "../src/sim/physics.js"`.
+- [ ] Force precedence is a branch: inside any field only hook forces apply; outside, walls and updraft apply. Overlapping fields add.
+- [ ] Exit pull attracts both colours and overrides the walls.
+- [ ] Cushion never lets the player closer than `safeGap`; wall pull reaches the wall.
+- [ ] Updraft restores `riseSpeed`; drag bleeds faster speeds back; speed is capped at `maxSpeed`.
+- [ ] Grace: the front crossing the player starts it; 0.40 s off, then a 0.15 s ramp to full.
+- [ ] Green: physics (10) + earlier = 28 passed, 0 failed.
+
 - [ ] **Step 6: Commit**
 
 ```bash
@@ -1707,6 +1756,16 @@ export function launch(state) {
 Run: `cd game && npx vitest run test/latch.test.js test/physics.test.js`
 Expected: PASS — latch (11), physics (10)
 
+**Phase 6 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 7 until every box is ticked and the results are in the task report.
+
+- [ ] Red seen: `tryLatch` not exported.
+- [ ] Latch happens only inside `latchRadius` and only when attracted; `relatchCooldown` blocks an instant re-latch.
+- [ ] Arrival speed sets omega, clamped to [`minOrbitSpeed`, `maxOrbitSpeed`]; direction follows arrival; omega bleeds by the TDD formula; the orbit follows the bobbing hook.
+- [ ] Launch = tangential + radial impulse, capped at `maxSpeed`.
+- [ ] Latency compensation only changes the aim (theta rewound by omega × `inputLatencyComp`); the player is not moved.
+- [ ] Launch assist: attracting hooks only, within `maxReach` and a 45° cone, nudge ≤ 6°, never past the hook.
+- [ ] Green: latch (11) + physics (10) + earlier = 39 passed, 0 failed.
+
 - [ ] **Step 5: Commit**
 
 ```bash
@@ -1953,6 +2012,17 @@ export function checkNearMiss(state) {
 
 Run: `cd game && npx vitest run test/collision.test.js`
 Expected: PASS (9 tests)
+
+**Phase 7 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 8 until every box is ticked and the results are in the task report.
+
+- [ ] Red seen: `Failed to resolve import "../src/sim/collision.js"`.
+- [ ] Obstacle contact pushes out, removes inward velocity, and applies friction once per contact; the contact event fires only on the first step.
+- [ ] A pulled player pinned under a bar slides free.
+- [ ] Shaft posts block without killing; side walls kill; the doorway gap in the top wall does not.
+- [ ] Exit capture fires only inside the mouth span.
+- [ ] No tunnelling through a bar or a post at `maxSpeed`.
+- [ ] Near miss fires once per approach, only while pulled.
+- [ ] Green: collision (9) + earlier = 48 passed, 0 failed.
 
 - [ ] **Step 5: Commit**
 
@@ -2298,6 +2368,18 @@ export function step(world, dt, flips) {
 Run: `cd game && npx vitest run`
 Expected: PASS — world (10) plus all earlier files. `purity.test.js` now scans seven sim files and must still pass.
 
+**Phase 8 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 9 until every box is ticked and the results are in the task report.
+
+- [ ] Red seen: `Failed to resolve import "../src/sim/world.js"`.
+- [ ] `world.js` is the sim's only entry point: `createWorld`, `startRoom`, `step`; `step` returns event name strings in one reused array.
+- [ ] `startRoom` puts the player in the hatch, coloured to the walls, for the ready beat; the entry launch fires straight up at `entryLaunchSpeed`.
+- [ ] Taps are buffered inside the entry zone and inside the launching field.
+- [ ] Exit capture ends the room, lifts the player and ignores taps; `win` fires only on the last room.
+- [ ] Stall death fires after `stallTime` when pinned below `stallSpeed`; `stallTime: 0` disables it.
+- [ ] Every attempt at a room is identical (determinism test).
+- [ ] The purity test scans seven sim files and passes.
+- [ ] Green: world (10) + earlier = 58 passed, 0 failed.
+
 - [ ] **Step 5: Commit**
 
 ```bash
@@ -2391,6 +2473,13 @@ Run: `cd game && npx vitest run test/bots.test.js`
 Expected: PASS (7 tests). There is no separate "fail first" step — this test guards data that already exists.
 
 **If a bot clears a room, stop.** That is a room-design failure (spec §6 rule check), not a test bug. Do not weaken the bot or move room geometry on your own. Report to the user: which bot, which room, and the player's path (log `w.player.pos` every 60 steps for the clearing run). Room edits need the user's approval and must re-pass `levels.test.js`.
+
+**Phase 9 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 10 until every box is ticked and the results are in the task report.
+
+- [ ] `the harness detects a clear` passes. Without it, the bot passes below prove nothing.
+- [ ] Idle, drift and repel bots each run 60 s in room 1 and room 2, and none clears either room.
+- [ ] If a bot cleared a room, you stopped and reported it; level data was not changed without the user.
+- [ ] Green: bots (7) + earlier = 65 passed, 0 failed.
 
 - [ ] **Step 3: Commit**
 
@@ -2806,6 +2895,18 @@ export function bindInput(pointerTarget, keyTarget, onTap) {
 Run: `cd game && npx vitest run`
 Expected: PASS — game (10) plus all earlier files.
 
+**Phase 10 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 11 until every box is ticked and the results are in the task report.
+
+- [ ] Red seen: `Failed to resolve import "../src/game.js"`.
+- [ ] Title tap emits `titleTap` and sets `startPending`; further taps are ignored; the run starts after `titleFlipTime`, then the ready beat.
+- [ ] Taps during play reach the sim; during `dying` (0.6 s) they are ignored, then the same room restarts with a ready beat.
+- [ ] Room 1 exit → 0.4 s transition → room 2 entry launch.
+- [ ] Room 2 exit wins, stops the timer and stores the best under `flip.bestTime.v1`; a slower run keeps the old best; the win tap returns to title.
+- [ ] Slow-mo never slows the run timer.
+- [ ] Blocked storage: no best time, and the game still runs.
+- [ ] `bindInput` sends one tap per press and ignores key repeat.
+- [ ] Green: game (10) + earlier = 75 passed, 0 failed.
+
 - [ ] **Step 6: Commit**
 
 ```bash
@@ -3153,6 +3254,15 @@ export function updateEffects(fx, dt, world) {
 
 Run: `cd game && npx vitest run test/view.test.js`
 Expected: PASS (7 tests)
+
+**Phase 11 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 12 until every box is ticked and the results are in the task report.
+
+- [ ] Red seen: `Failed to resolve import "../src/view/anim/ease.js"`.
+- [ ] Camera pans up one room over `panTime`, only during the transition; a weaker shake never cuts a stronger one short, and shake decays to zero.
+- [ ] The particle pool never grows past 200 and recycles dead slots.
+- [ ] Effects registry: death → burst + shake; latch pop and flip ring run for their theme time, then clear; the trail keeps at most `trailDots` samples.
+- [ ] Nothing in `view/` writes to world or game state (read `effects.js` and `camera.js` to confirm).
+- [ ] Green: view (7) + earlier = 82 passed, 0 failed.
 
 - [ ] **Step 8: Commit**
 
@@ -3834,6 +3944,18 @@ Check, and write each result down for the task report:
 8. Console shows no errors (`read_console_messages` with `onlyErrors: true`). **Expected exception until the Art & Design plan ships the font:** Vite answers the missing `/fonts/baloo2-subset.woff2` with an HTML page, so the browser logs a font decode / OTS warning. That one message is not a failure; anything else is.
 9. At 375 × 812 (`resize_window` preset `mobile`) the room letterboxes with no scrollbars. Reset to `desktop` afterwards.
 
+**Phase 12 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. Do not start Task 13 until every box is ticked and the results are in the task report.
+
+- [ ] Red seen: `Failed to resolve import "../src/view/render.js"`.
+- [ ] All nine art modules exist in `src/view/art/` with the contract signatures from "Where things go".
+- [ ] `render.js` holds draw order only; `screens.js`, `fonts.js` and `main.js` exist.
+- [ ] Every state renders without error, with no gradients or shadows (render test).
+- [ ] `loadFonts` resolves `false` on a missing file, an error or the 1 s timeout, and the fallback stack is used.
+- [ ] `main.js` clamps frames at 0.25 s, pauses on `visibilitychange`, and validates rooms in dev.
+- [ ] Browser checks 1–9 from Step 9 are each recorded as pass; the only console message allowed is the missing-font warning.
+- [ ] The viewport was reset to `desktop` afterwards.
+- [ ] Green: render (2) + earlier = 84 passed, 0 failed.
+
 - [ ] **Step 10: Commit**
 
 ```bash
@@ -3904,6 +4026,17 @@ Expected: matches only in `createWorld` and at module scope (the `acc` scratch v
 4. `dist/` under 200 KB and runs from a static server — Steps 4–5.
 5. 60 fps on desktop Chrome, no per-step allocation in `sim/` — Steps 6–7.
 
+**Phase 13 checklist** — tick every box before the commit step. An unticked box means the phase is not done: fix it, or stop and report it. This is the plan's final gate.
+
+- [ ] 13 test files, 84 tests, 0 failures.
+- [ ] `dist/` built with no unresolved-URL warnings; every script path starts with `./assets/`.
+- [ ] Size check prints `OK`; the byte count is recorded.
+- [ ] The static preview plays identically; no network requests except the page's own files.
+- [ ] Frame rate ≥ 58 fps on desktop Chrome; the number is recorded.
+- [ ] The allocation grep shows matches only in `createWorld` and at module scope.
+- [ ] Done-when lines 1–5 (spec §11) are each reported pass / fail with evidence.
+- [ ] `git status` is clean, or the fix-up commit below covers every change.
+
 - [ ] **Step 9: Commit** (only if Steps 1–7 required fixes)
 
 ```bash
@@ -3971,3 +4104,7 @@ git commit -m "fix(game): address build and performance check findings"
 ### [25-09-26] — Project-log steps added
 - **Added:** Global constraints for CLAUDE.md logging (Decision Log on every `.md`; directory-log + setup-log for every new folder) and the shell / Python note. Task 1 Step 9b logs the `game/` tree; the README gets its Decision Log block.
 - **Notes:** Prompted by the art-plan review (m12), which found the same gap there. No code or test change.
+
+### [25-09-26] — Per-phase checklists added
+- **Added:** A Phase N checklist before the commit step of all 13 tasks (red seen, files and behaviours, cumulative test totals 1 → 84, browser and build checks); a note under Tasks explaining the gate.
+- **Notes:** User request: a per-phase checklist so every item is confirmed built and working before the next task starts.

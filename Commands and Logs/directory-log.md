@@ -124,3 +124,9 @@ Append-only master history of all events in the Flip-Prototype directory.
 - **Location:** Working Files/2026-09-25-flip-v1-art-plan.md
 - **Reason:** Subagent re-run found a Task 2–3 regression.
 - **Source Log:** —
+
+### [25-09-26 14:14] — EDITED | Working Files/2026-09-23-flip-v1-dev-plan.md, Working Files/2026-09-25-flip-v1-art-plan.md
+- **Action:** Added a per-phase checklist before each task's commit step (13 in the dev plan, 9 in the art plan), plus a Decision Log entry in each.
+- **Location:** Working Files/
+- **Reason:** User request: verify every item is built and working at the end of each phase.
+- **Source Log:** —
