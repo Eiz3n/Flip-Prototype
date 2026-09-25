@@ -136,3 +136,15 @@ Append-only master history of all events in the Flip-Prototype directory.
 - **Location:** game/
 - **Reason:** Dev plan Task 1 — code lives in `game/`.
 - **Source Log:** Maintenance/setup-log.md (Structural Change Log)
+
+### [25-09-26 14:40] — CREATED | game/src/levels/
+- **Action:** Added the per-room level folder: `index.js` (play order), `room-01-sidestep.js`, `room-02-cluster.js`, `validate.js` (authoring rules).
+- **Location:** game/src/levels/
+- **Reason:** Dev plan Task 4 — one file per room so each level can be found and edited on its own.
+- **Source Log:** Maintenance/setup-log.md (Structural Change Log)
+
+### [25-09-26 14:40] — DELETED | game/src/sim/.gitkeep
+- **Action:** Removed the placeholder; `src/sim/` now holds `vec.js`, `wave.js`, `entities.js`, `room.js`.
+- **Location:** game/src/sim/.gitkeep
+- **Reason:** Dev plan Task 4 Step 8 — folder has real files.
+- **Source Log:** Maintenance/setup-log.md (Structural Change Log)

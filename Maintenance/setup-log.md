@@ -175,6 +175,18 @@ Append every structural change. Dual-written with `Commands and Logs/directory-l
 - **Reason:** Dev plan Task 1 — code lives in `game/`.
 - **Linkages/References affected:** `game/README.md` maps the tree. Not in any GPS index — `game/` sits outside the indexed folders. The Original File Structure Snapshot above predates it.
 
+### [25-09-26 14:40] — CREATED | game/src/levels/
+- **Action:** Added the per-room level folder: `index.js` (play order), `room-01-sidestep.js`, `room-02-cluster.js`, `validate.js` (authoring rules).
+- **Location:** `game/src/levels/`
+- **Reason:** Dev plan Task 4 — one file per room so each level can be found and edited on its own.
+- **Linkages/References affected:** `game/README.md` "Where things live" and "Add a room" point here. Not in any GPS index.
+
+### [25-09-26 14:40] — DELETED | game/src/sim/.gitkeep
+- **Action:** Removed the placeholder; `src/sim/` now holds `vec.js`, `wave.js`, `entities.js`, `room.js`.
+- **Location:** `game/src/sim/.gitkeep`
+- **Reason:** Dev plan Task 4 Step 8 — folder has real files.
+- **Linkages/References affected:** None — the purity test scans `src/sim/*.js` and never read the placeholder.
+
 ---
 
 ## Reinstall History
