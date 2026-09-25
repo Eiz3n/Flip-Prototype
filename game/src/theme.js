@@ -1,6 +1,5 @@
 // Every visual value, read from the Flip Art canvas on 25-09-26 (art plan, "Canvas → code").
-// Geometry that collides lives in config.js. Keys marked "compat" are read only by code this
-// plan replaces; they stay until Task 9 removes them.
+// Geometry that collides lives in config.js.
 import { deepFreeze } from './deepFreeze.js';
 
 export const theme = deepFreeze({
@@ -22,24 +21,23 @@ export const theme = deepFreeze({
     bodySize: 16,         // "tap to start", "tap to return"
     rowSize: 15,          // win panel rows
     smallSize: 13,        // "best —", "New best"
-    lineHeight: 1.6,      // Baloo 2's normal line box ≈ size × 1.6; tune in Task 8
+    lineHeight: 1.6,      // Baloo 2's normal line box ≈ size × 1.6; within 0.5 of the canvas (Task 8)
   },
   render: { maxDpr: 2 },
   stroke: { ink: 2 },
-  size: { hook: 14, markScale: 0.55 },            // markScale: compat
+  size: { hook: 14 },
   field: { idleWidth: 1, idleAlpha: 0.2, insideWidth: 2, insideAlpha: 0.5, titleAlpha: 0.12 },
   tether: { width: 1, alpha: 0.5 },
   walls: { innerEdge: 2, frontLineWidth: 1 },
   shaft: {
     postOutline: 2,
     chevronWidth: 18, chevronHeight: 10.8, chevronStroke: 3.6, chevronGap: 3,   // spacing = height + gap
-    chevronSpacing: 13.8,                         // compat: the blockout shaft.js reads it until Task 4
     chevronAlphas: [0.35, 0.65, 1],               // top → bottom, as on the canvas
     chevronSpeed: 20,
     pullCueLength: 64, pullCueAlpha: 0.4, pullCueAngle: 30, pullCueWidth: 1.5, pullCueDash: [4, 3],
   },
   updraft: { dashWidth: 2, dashLength: 12, radius: 1, alpha: 0.14, count: 14, speed: 20 },
-  hud: { y: 12, sidePad: 20, rowHeight: 24 },     // rowHeight ≈ the canvas row's line box; tune in Task 8
+  hud: { y: 12, sidePad: 20, rowHeight: 24 },     // row centre y 24, as on the canvas (Task 8)
   title: {
     hooks: [
       { x: 90, y: 150, pol: +1 },
@@ -56,12 +54,11 @@ export const theme = deepFreeze({
     roomPopTime: 0.6, roomPopScale: 1.3,
     obstacleFlashTime: 0.15,
     trailDots: 3, trailSpacing: 10, trailRadii: [4, 3.5, 3], trailAlphas: [0.55, 0.35, 0.2],
-    trailInterval: 0.03,                          // compat
     launchPuffCount: 4, launchPuffSpeed: 60, launchPuffSpread: 1.2, launchPuffLife: 0.35,
     launchPuffRadii: [2.5, 2, 2, 1.5], launchPuffAlphas: [0.5, 0.35, 0.35, 0.2],   // Sprites cell is 2×
     deathBurstCount: 8, deathBurstSpeed: 140, deathBurstInnerSpeed: 0.4, deathBurstAlpha: 0.7,
     deathBurstRadii: [2, 2, 2, 2, 2, 2, 1.35, 1.35],
-    particleLife: 0.5, particleSize: 2,
+    particleLife: 0.5,
     entryShake: { amount: 3, time: 0.1 },
     deathShake: { amount: 10, time: 0.3 },
   },
