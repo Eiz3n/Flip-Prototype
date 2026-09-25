@@ -26,6 +26,8 @@
 - `vite.config.js` uses `base: './'`. `dist/` under **200 KB**.
 - `config.launchPreview = false`. Audio is out of scope.
 - Project rule: plans and specs live in `Working Files/`; code lives in `game/`. Commits go to the `Dev` branch.
+- Project logs (CLAUDE.md): every new or edited `.md` file (for example `game/README.md`) ends with a Decision Log block. Every new folder, deletion or move is appended to **both** `Commands and Logs/directory-log.md` and `Maintenance/setup-log.md` (Structural Change Log), in their existing formats. Task 1 logs the `game/` tree; later tasks log any folder they add (`src/levels/`, `src/view/`, `src/view/anim/`, `src/view/art/`) in the same commit.
+- Shell: run `bash` blocks in Git Bash (the Bash tool). Python, if ever needed, is `py -3`.
 
 ## Deviation from the spec
 
@@ -316,11 +318,16 @@ Contents (plain Markdown):
 
 - `## Add a room` — numbered: (1) copy `src/levels/room-02-cluster.js` to `src/levels/room-03-<name>.js` and set `index: 3`; (2) set `entry.x` to room 2's `exit.x`; (3) add it to the array in `src/levels/index.js`; (4) `npm test` — the validator and both passive bots must pass.
 - `## Change how something looks` — one paragraph: find the drawable in `src/view/art/` or the value in `src/theme.js`. Collision shapes (player radius, shaft posts) come from `src/config.js`; change them there so drawing and physics stay matched.
+- End with the project Decision Log block: `---`, `## Decision Log`, one entry `### [DD-MM-YY] — Game README created` (map of the tree, add-a-room and change-a-look notes).
+
+- [ ] **Step 9b: Log the new tree**
+
+Append `CREATED | game/` (Vite project: `src/sim/`, `public/fonts/`, `test/`) to both `Commands and Logs/directory-log.md` and `Maintenance/setup-log.md` (Structural Change Log), in their existing formats.
 
 - [ ] **Step 10: Commit**
 
 ```bash
-git add game/package.json game/package-lock.json game/vite.config.js game/.gitignore game/index.html game/README.md game/src/sim/.gitkeep game/public/fonts/.gitkeep game/test/purity.test.js
+git add game/package.json game/package-lock.json game/vite.config.js game/.gitignore game/index.html game/README.md game/src/sim/.gitkeep game/public/fonts/.gitkeep game/test/purity.test.js "Commands and Logs/directory-log.md" Maintenance/setup-log.md
 git commit -m "chore(game): scaffold Vite project with sim purity test"
 ```
 
@@ -363,7 +370,7 @@ test('config holds the v1 room, shaft and timing geometry', () => {
   expect(config.room).toEqual({ width: 360, height: 640, wallBand: 10, topWall: 6, bottomWall: 6 });
   expect(config.shaft).toMatchObject({ opening: 60, depth: 46, postWidth: 8, postOverhang: 6,
     exitMouthY: 52, entryMouthY: 588, spawnY: 580, entryZoneRadius: 50 });
-  expect(config.timing).toMatchObject({ dyingTime: 0.6, readyBeat: 0.5, panTime: 0.4 });
+  expect(config.timing).toMatchObject({ titleFlipTime: 0.25, dyingTime: 0.6, readyBeat: 0.5, panTime: 0.4 });
   expect(config.bob).toEqual({ ampX: 8, ampY: 5, freq: 0.4, phaseStep: 1.1 });
   expect(config.exitXRanges).toEqual([[80, 110], [250, 280]]);
   expect(config).toMatchObject({ stallTime: 3, stallSpeed: 5, obstacleGap: 48 });
@@ -489,6 +496,7 @@ export const config = deepFreeze({
 
   // State machine timings
   timing: {
+    titleFlipTime: 0.25,        // v1: the logo's F flips on the title tap before the run starts
     dyingTime: 0.6,
     readyBeat: 0.5,
     panTime: 0.4,
@@ -740,9 +748,9 @@ test('builds shaft posts from entry and exit x', () => {
   const room = new Room(blankLevel({ entry: { x: 180 }, exit: { x: 265 } }), config);
   const [exitL, exitR, hatchL, hatchR] = room.posts;
   expect([exitL.left, exitL.right, exitR.left, exitR.right]).toEqual([227, 235, 295, 303]);
-  expect([exitL.top, exitL.bottom]).toEqual([0, 58]);
+  expect([exitL.top, exitL.bottom]).toEqual([0, 52]);                  // ends at the exit mouth
   expect([hatchL.left, hatchL.right, hatchR.left, hatchR.right]).toEqual([142, 150, 210, 218]);
-  expect([hatchL.top, hatchL.bottom]).toEqual([582, 640]);
+  expect([hatchL.top, hatchL.bottom]).toEqual([588, 640]);             // starts at the hatch mouth
   expect(room.posts.every((p) => p.kind === 'post')).toBe(true);
   expect(room.solids.length).toBe(4);
 });
@@ -893,15 +901,16 @@ import { HookPoint, Obstacle } from './entities.js';
 
 const TAU = Math.PI * 2;
 
-// Posts flank each shaft opening. Exit posts run from the top edge to 6 below the mouth;
-// hatch posts run from 6 above the mouth to the bottom edge (spec §4, §6.1).
+// Posts flank each shaft opening and end at its mouth line: exit posts run from the top edge
+// down to exitMouthY (52 = depth 46 + postOverhang 6); hatch posts run from entryMouthY (588)
+// to the bottom edge. Matches the Flip Art canvas (spec §4, §6.1).
 // Exported so levels/validate.js checks the same rectangles the physics uses.
 export function buildPosts(entryX, exitX, cfg) {
   const s = cfg.shaft;
   const half = s.opening / 2;
   const w = s.postWidth;
-  const exitLen = s.exitMouthY + s.postOverhang;
-  const hatchTop = s.entryMouthY - s.postOverhang;
+  const exitLen = s.exitMouthY;
+  const hatchTop = s.entryMouthY;
   const hatchLen = cfg.room.height - hatchTop;
   return [
     new Obstacle('bar', exitX - half - w / 2, exitLen / 2, w, exitLen, 'post'),
@@ -2403,14 +2412,14 @@ git commit -m "test(sim): add idle and drift passive bots over both rooms"
 - Produces:
   - `createGame({ levels, cfg, storage, onEvent }) → game` — `storage` is a `localStorage`-like object or `null`; `onEvent(name)` receives every sim event plus `titleTap`, `roomStart`, `toTitle`.
   - `tap(game)` and `update(game, dt)`.
-  - `game` fields the view reads: `state` (`'title'|'playing'|'transition'|'dying'|'win'`), `stateTime`, `world`, `runTime` (s), `deaths`, `best` (ms or `null`), `lastTimeMs`, `newBest`, `timeScale`.
+  - `game` fields the view reads: `state` (`'title'|'playing'|'transition'|'dying'|'win'`), `stateTime`, `world`, `runTime` (s), `deaths`, `best` (ms or `null`), `lastTimeMs`, `newBest`, `timeScale`, `startPending` (s left on the title flip; the title screen keeps drawing while it runs).
   - `bindInput(pointerTarget, keyTarget, onTap) → unbind` — one call per pointer press or Space press (key repeat ignored), passing `event.timeStamp`.
 
 **State table** (spec §8):
 
 | State | On enter | Leaves when |
 |---|---|---|
-| `title` | — | tap → `startRoom(0, readyBeat)`, `playing` |
+| `title` | — | tap → `titleTap` (logo F flips; further taps ignored) → after `titleFlipTime` (0.25 s) → `startRoom(0, readyBeat)`, `playing` |
 | `playing` | — | sim `death` → `dying`; sim `exitCaptured` (not last) → `transition`; sim `win` → `win` |
 | `transition` | next room reset (so the pan shows its start state); sim keeps stepping (player rises up the shaft) | `stateTime ≥ panTime` → `startRoom(next, 0)`, `playing` |
 | `dying` | deaths +1, death slow-mo | `stateTime ≥ dyingTime` → `startRoom(same, readyBeat)`, `playing` |
@@ -2444,6 +2453,12 @@ function advance(game, seconds) {
   for (let i = 0; i < Math.round(seconds / DT); i++) update(game, DT);
 }
 
+// Title tap → logo flip (titleFlipTime) → room 1 ready beat → entry launch, then a little flight.
+function beginPlay(game) {
+  tap(game);
+  advance(game, config.timing.titleFlipTime + config.timing.readyBeat + 0.1);
+}
+
 function captureNow(game) {
   const w = game.world;
   Object.assign(w.player.pos, { x: w.room.exitX, y: 60 });
@@ -2452,10 +2467,16 @@ function captureNow(game) {
   w.player.latched = null;
 }
 
-test('title tap starts room 1 after the ready beat', () => {
+test('title tap plays the logo flip, then starts room 1 after the ready beat', () => {
   const { game, events } = newGame();
   expect(game.state).toBe('title');
   tap(game);
+  expect(game.state).toBe('title');                   // the F flips on the title screen first
+  expect(events).toEqual(['titleTap']);
+  tap(game);                                          // taps during the flip are ignored
+  advance(game, config.timing.titleFlipTime - 0.05);
+  expect(game.state).toBe('title');
+  advance(game, 0.1);
   expect(game.state).toBe('playing');
   expect(events).toEqual(['titleTap', 'roomStart']);
   advance(game, 0.6);
@@ -2466,7 +2487,7 @@ test('title tap starts room 1 after the ready beat', () => {
 test('taps during play reach the sim', () => {
   const { game, events } = newGame();
   tap(game);
-  advance(game, 1.0);                                 // clear of the entry zone
+  advance(game, config.timing.titleFlipTime + 1.0);   // clear of the entry zone
   events.length = 0;
   tap(game);
   update(game, DT);
@@ -2475,10 +2496,10 @@ test('taps during play reach the sim', () => {
 
 test('death → dying 0.6 s (taps ignored) → same room with ready beat', () => {
   const { game, events } = newGame();
-  tap(game); advance(game, 0.6);
+  beginPlay(game);
   const p = game.world.player;
-  Object.assign(p.pos, { x: 19, y: 320 });
-  p.pol = -p.pol; p.latched = null;                   // opposite the walls: pulled into the wall
+  Object.assign(p.pos, { x: 18, y: 320 });            // 18 − 8 = 10: touching the wall, dies on the next step
+  p.pol = -p.pol; p.latched = null;
   advance(game, 0.1);
   expect(game.state).toBe('dying');
   expect(game.deaths).toBe(1);
@@ -2494,7 +2515,7 @@ test('death → dying 0.6 s (taps ignored) → same room with ready beat', () =>
 
 test('room 1 exit → transition 0.4 s → room 2 entry launch', () => {
   const { game, events } = newGame();
-  tap(game); advance(game, 0.6);
+  beginPlay(game);
   game.world.rooms[1].time = 5;                       // stale state from an earlier run
   captureNow(game);
   advance(game, 0.05);
@@ -2509,7 +2530,7 @@ test('room 1 exit → transition 0.4 s → room 2 entry launch', () => {
 
 test('room 2 exit wins, stops the timer and stores the best time', () => {
   const { game, storage } = newGame();
-  tap(game); advance(game, 0.6);
+  beginPlay(game);
   captureNow(game); advance(game, 0.5);              // → room 2
   advance(game, 0.1);
   captureNow(game); advance(game, 0.05);
@@ -2527,7 +2548,7 @@ test('a slower run keeps the old best', () => {
   storage.setItem('flip.bestTime.v1', '1');
   const { game } = newGame(storage);
   expect(game.best).toBe(1);
-  tap(game); advance(game, 0.6);
+  beginPlay(game);
   captureNow(game); advance(game, 0.5); advance(game, 0.1);
   captureNow(game); advance(game, 0.05);
   expect(game.newBest).toBe(false);
@@ -2536,7 +2557,7 @@ test('a slower run keeps the old best', () => {
 
 test('win tap returns to title', () => {
   const { game, events } = newGame();
-  tap(game); advance(game, 0.6);
+  beginPlay(game);
   captureNow(game); advance(game, 0.5); advance(game, 0.1);
   captureNow(game); advance(game, 0.05);
   tap(game);
@@ -2546,7 +2567,7 @@ test('win tap returns to title', () => {
 
 test('slow-mo never slows the run timer', () => {
   const { game } = newGame();
-  tap(game); advance(game, 0.6);
+  beginPlay(game);
   const before = game.runTime;
   game.slowmo = 0.08;
   update(game, DT);
@@ -2558,7 +2579,7 @@ test('blocked storage means no best time, and the game still runs', () => {
   const broken = { getItem() { throw new Error('blocked'); }, setItem() { throw new Error('blocked'); } };
   const { game } = newGame(broken);
   expect(game.best).toBe(null);
-  tap(game); advance(game, 0.6);
+  beginPlay(game);
   captureNow(game); advance(game, 0.5); advance(game, 0.1);
   captureNow(game);
   expect(() => advance(game, 0.05)).not.toThrow();
@@ -2639,6 +2660,7 @@ export function createGame({ levels, cfg, storage = null, onEvent = () => {} }) 
     newBest: false,
     slowmo: 0,
     timeScale: 1,
+    startPending: 0,              // seconds left on the title logo flip before the run starts
   };
 }
 
@@ -2656,8 +2678,11 @@ function startRun(game) {
 export function tap(game) {
   switch (game.state) {
     case 'title':
+      // The logo's F flips first (spec §8); the run starts when the flip ends.
+      if (game.startPending > 0) break;             // already flipping: ignore extra taps
       game.onEvent('titleTap');
-      startRun(game);
+      game.startPending = game.cfg.timing.titleFlipTime;
+      if (game.startPending <= 0) startRun(game);
       break;
     case 'playing':
       game.pendingTaps++;
@@ -2711,6 +2736,15 @@ export function update(game, dt) {
   if (game.timerRunning) game.runTime += dt;
 
   switch (game.state) {
+    case 'title':
+      if (game.startPending > 0) {
+        game.startPending -= dt;
+        if (game.startPending <= 0) {
+          game.startPending = 0;
+          startRun(game);
+        }
+      }
+      break;
     case 'playing': {
       const taps = game.pendingTaps;
       game.pendingTaps = 0;
@@ -3211,8 +3245,8 @@ test('every state renders without error and without gradients or shadows', () =>
   frame(0.05);                                         expect(game.state).toBe('transition');
   frame(0.2);                                          // mid-pan: both rooms drawn
   frame(0.4);                                          expect(game.world.roomIndex).toBe(1);
-  Object.assign(w.player.pos, { x: 19, y: 320 });
-  w.player.pol = -w.player.pol; w.player.latched = null;
+  Object.assign(w.player.pos, { x: 18, y: 320 });     // touching the wall: dies on the next step
+  w.player.latched = null;
   frame(0.1);                                          expect(game.state).toBe('dying');
   frame(0.7);                                          // dying done, ready beat running
   Object.assign(w.player.pos, { x: w.room.exitX, y: 60 });   // ready phase holds position
@@ -3331,19 +3365,19 @@ export function drawExitDoorway(ctx, x, time, theme) {
   const s = config.shaft;
   const half = s.opening / 2;
   ctx.fillStyle = theme.color.ink;
-  ctx.fillRect(x - half, 0, s.opening, s.exitMouthY);
-  chevrons(ctx, x, 0, s.exitMouthY, time, theme);
-  posts(ctx, x, 0, s.exitMouthY + s.postOverhang, theme);
+  ctx.fillRect(x - half, 0, s.opening, s.depth);                 // interior 46 deep, posts reach the mouth
+  chevrons(ctx, x, 0, s.depth, time, theme);
+  posts(ctx, x, 0, s.exitMouthY, theme);
 
   const t = theme.shaft;
-  const feetY = s.exitMouthY + s.postOverhang;
+  const feetY = s.exitMouthY;
   const a = (t.pullCueAngle * Math.PI) / 180;
   ctx.strokeStyle = theme.color.ink;
   ctx.globalAlpha = t.pullCueAlpha;
   ctx.lineWidth = 1;
   ctx.setLineDash([4, 4]);
   for (const sign of [-1, 1]) {
-    const fx = x + sign * (half + s.postWidth / 2);
+    const fx = x + sign * (half + s.postWidth);                   // outer foot of each post
     ctx.beginPath();
     ctx.moveTo(fx, feetY);
     ctx.lineTo(fx + sign * Math.sin(a) * t.pullCueLength, feetY + Math.cos(a) * t.pullCueLength);
@@ -3357,9 +3391,9 @@ export function drawEntryHatch(ctx, x, time, theme) {
   const s = config.shaft;
   const H = config.room.height;
   ctx.fillStyle = theme.color.ink;
-  ctx.fillRect(x - s.opening / 2, s.entryMouthY, s.opening, H - s.entryMouthY);
-  chevrons(ctx, x, s.entryMouthY, H, time, theme);
-  posts(ctx, x, s.entryMouthY - s.postOverhang, H, theme);
+  ctx.fillRect(x - s.opening / 2, H - s.depth, s.opening, s.depth);
+  chevrons(ctx, x, H - s.depth, H, time, theme);
+  posts(ctx, x, s.entryMouthY, H, theme);
 }
 ```
 
@@ -3791,7 +3825,7 @@ Run: `cd game && npm run dev` and open the printed URL in the browser pane (use 
 
 Check, and write each result down for the task report:
 1. Title shows the logo with an upside-down F, "Tap to flip" and "Best —".
-2. Tap: room 1 appears, a 0.5 s pause, then the player launches up out of the floor hatch.
+2. Tap: the title stays up for 0.25 s (the blockout logo does not animate yet; the art plan adds the F flip), then room 1 appears, a 0.5 s pause, then the player launches up out of the floor hatch.
 3. Walls show two colour bands with a hard edge and a thin ink line that moves down.
 4. Hook points show field rings that thicken when the player is inside.
 5. Dying on a side wall: burst, shake, restart in the hatch after about 1.1 s, death count +1.
@@ -3922,3 +3956,18 @@ git commit -m "fix(game): address build and performance check findings"
 - **Removed:** Friction applied on every contact step.
 - **Choices given:** stuck-at-centre handling (stall death / hold to restart / both / leave for playtest) → **Chosen:** stall death, with the time configurable.
 - **Notes:** A stall death emits the normal `death` event, so `game.js` and the view are unchanged. B1 (repo path) is not applied yet; the user asked why a clean path is needed. B2 (Task 10 death test starting at x 19) is still open.
+
+### [25-09-26] — B2 fixed; shaft posts aligned with the canvas
+- **Added:** Task 10 death test and Task 12 render test now place the player at x 18, touching the wall, so death is immediate (review B2).
+- **Removed:** Post geometry that ran 6 past each mouth (exit posts y 0–58, hatch posts 582–640).
+- **Notes:** The Flip Art canvas draws the exit posts y 0–52 and the hatch posts 588–640, ending at the mouth lines, with a 46-deep ink interior. That matches spec §4 ("6 longer than the shaft": 46 + 6 = 52). `buildPosts`, the room test and the blockout `shaft.js` now follow it; the pull-cue feet sit at the posts' outer edges, as on the canvas. Collision, validator and bot expectations are unaffected, by hand check (the post-orbit rule case is still 41 from the post, under 48).
+
+### [25-09-26] — Title tap waits for the logo flip
+- **Added:** `config.timing.titleFlipTime` (0.25 s) and `game.startPending`. A title tap emits `titleTap`, stays on the title while the F flips, ignores further taps, then starts the run. A `beginPlay` test helper; the title test now checks the delay and that extra taps are ignored.
+- **Removed:** Run start on the same frame as the title tap.
+- **Choices given:** add a start delay so the flip is seen (yes / no) → **Chosen:** yes. The screen transitions after the flip animation plays.
+- **Notes:** Behaviour lives here; the art plan animates the flip for the same `titleFlipTime`, so the two can never drift. Seven game tests switched to `beginPlay` (0.85 s = flip + ready beat + 0.1). The Task 12 render test already advances 0.8 s before its first live check (entry launch at 0.75 s), so it is unaffected.
+
+### [25-09-26] — Project-log steps added
+- **Added:** Global constraints for CLAUDE.md logging (Decision Log on every `.md`; directory-log + setup-log for every new folder) and the shell / Python note. Task 1 Step 9b logs the `game/` tree; the README gets its Decision Log block.
+- **Notes:** Prompted by the art-plan review (m12), which found the same gap there. No code or test change.

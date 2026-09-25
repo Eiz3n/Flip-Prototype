@@ -76,3 +76,51 @@ Append-only master history of all events in the Flip-Prototype directory.
 - **Location:** Reference Files/Flip Art.html
 - **Reason:** Reference File Added workflow; the file had not been indexed when it was added.
 - **Source Log:** Reference Files/reference-index.md
+
+### [25-09-26 10:51] — EDITED | Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Action:** Fixed review B2 (death tests start at x 18) and aligned shaft post geometry with the Flip Art canvas.
+- **Location:** Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Reason:** User asked to fix B2 before the art plan; the canvas read for the art plan showed the post mismatch.
+- **Source Log:** —
+
+### [25-09-26 11:02] — CREATED | Working Files/2026-09-25-flip-v1-art-plan.md
+- **Action:** Wrote the Flip v1 Art & Design implementation plan (9 TDD tasks) from the Flip Art canvas. Indexed in working-files-index.md.
+- **Location:** Working Files/2026-09-25-flip-v1-art-plan.md
+- **Reason:** User asked for a separate art and design plan after the dev plan.
+- **Source Log:** Working Files/working-files-index.md
+
+### [25-09-26 11:16] — EDITED | Working Files/2026-09-23-flip-v1-design.md
+- **Action:** Applied user decisions: the title tap waits for the logo flip; spec chevron wording follows the canvas.
+- **Location:** Working Files/2026-09-23-flip-v1-design.md
+- **Reason:** User answered both open questions from the art plan.
+- **Source Log:** —
+
+### [25-09-26 11:16] — EDITED | Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Action:** Applied user decisions: the title tap waits for the logo flip; spec chevron wording follows the canvas.
+- **Location:** Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Reason:** User answered both open questions from the art plan.
+- **Source Log:** —
+
+### [25-09-26 11:16] — EDITED | Working Files/2026-09-25-flip-v1-art-plan.md
+- **Action:** Applied user decisions: the title tap waits for the logo flip; spec chevron wording follows the canvas.
+- **Location:** Working Files/2026-09-25-flip-v1-art-plan.md
+- **Reason:** User answered both open questions from the art plan.
+- **Source Log:** —
+
+### [25-09-26 13:49] — EDITED | Working Files/2026-09-25-flip-v1-art-plan.md
+- **Action:** Applied all art-plan review findings (M1, M2, m1–m13).
+- **Location:** Working Files/2026-09-25-flip-v1-art-plan.md
+- **Reason:** User asked to fix all review findings.
+- **Source Log:** —
+
+### [25-09-26 13:49] — EDITED | Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Action:** Added project-log constraints and a Task 1 logging step.
+- **Location:** Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Reason:** Same gap as art-plan review finding m12.
+- **Source Log:** —
+
+### [25-09-26 13:58] — EDITED | Working Files/2026-09-25-flip-v1-art-plan.md
+- **Action:** Applied the re-verification fixes (compat chevronSpacing, Task 4 fail count).
+- **Location:** Working Files/2026-09-25-flip-v1-art-plan.md
+- **Reason:** Subagent re-run found a Task 2–3 regression.
+- **Source Log:** —

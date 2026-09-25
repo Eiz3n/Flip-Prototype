@@ -56,8 +56,8 @@ Read from the canvas into `src/theme.js`. The canvas is re-read and `theme.js` r
 | font | Baloo 2 — 800 logo, 700 HUD and labels, 400 body |
 | ink stroke | 2 |
 | player / hook radius | 8 / 14 |
-| shaft (exit doorway and entry hatch) | opening 60 wide, 46 deep, ink interior; neutral posts 8 wide with 2 px ink outline, 6 longer than the shaft |
-| shaft chevrons | three up-chevrons, 18 wide, background colour at 35 / 65 / 100 % (brightest nearest the way out); animate upward in game |
+| shaft (exit doorway and entry hatch) | opening 60 wide, 46 deep, ink interior; neutral posts 8 wide with 2 px ink outline, 6 longer than the shaft, ending at the mouth line (exit posts y 0–52, hatch posts y 588–640) |
+| shaft chevrons | three up-chevrons, 18 wide, background colour at 35 / 65 / 100 % from top to bottom (brightest at the bottom of each shaft, as on the canvas); in game they rise and fade as they rise |
 | exit pull cue | two 64-long dashed ink lines at 40 %, fanning out 30° from the post feet |
 | field ring idle / inside | 1 px at 20 % / 2 px at 50 % ink |
 | tether | 1 px at 50 % ink |
@@ -191,10 +191,10 @@ As TDD, with room 2 as the last room.
 
 | State | Enters on | Leaves on |
 |---|---|---|
-| Title | Boot; tap on Win | Tap → Playing, room 1 |
-| Playing | Title tap; pan done; Dying done | Wall contact → Dying; exit capture room 1 → Transition; exit capture room 2 → Win |
+| Title | Boot; tap on Win | Tap → the logo's F flips (0.25 s, further taps ignored) → Playing, room 1 |
+| Playing | Title flip done; pan done; Dying done | Wall contact or stall → Dying; exit capture room 1 → Transition; exit capture room 2 → Win |
 | Transition | Room 1 exit capture | 0.4 s pan done → entry launch from room 2's hatch |
-| Dying | Wall contact | 0.6 s → reset room, 0.5 s ready beat, entry launch |
+| Dying | Wall contact, or stall (pinned against a solid below 5 u/s for 3 s, configurable) | 0.6 s → reset room, 0.5 s ready beat, entry launch |
 | Win | Room 2 exit capture | Tap → Title |
 
 Timer starts at the first entry launch in room 1 and stops on the room 2 exit capture. Best time key: `flip.bestTime.v1` (milliseconds). Win screen shows time, deaths, best, and "New best" when beaten.
@@ -246,3 +246,9 @@ Test-first with Vitest on `sim/` only.
 - **Removed:** Circular exit and entry tokens (radii, rings, EXIT pill, gate segment); entry/exit y values from room data; exit-latch wording in the state machine and tests.
 - **Choices given:** Exit concept (ceiling doorway / finish gate / up-chute) → **Chosen:** ceiling doorway.
 - **Notes:** User rejected the labelled circle (previous entry is superseded): an exit must not be circular or resemble a hook point and must read as an exit unaided. The doorway changes behaviour from the TDD (fly in instead of latch-and-orbit); flagged to the user before they chose. Room 1's hop to the exit mouth is now 214, inside maxReach 220 but the tightest in the build — first candidate for adjustment in playtest.
+
+### [25-09-26] — Aligned with the canvas and the plan decisions
+- **Added:** §4 chevrons: brightest at the bottom of each shaft, fading as they rise (canvas order). §4 shaft: posts end at the mouth line (exit y 0–52, hatch y 588–640). §8: the title tap flips the logo's F for 0.25 s before Playing, ignoring further taps; stall death as a second way into Dying.
+- **Removed:** "brightest nearest the way out".
+- **Choices given:** update the §4 chevron wording to the canvas (yes / no) → **Chosen:** yes. Transition after the title flip (yes / no) → **Chosen:** yes.
+- **Notes:** The stall-death row records the decision already made during plan review (M1: stall death, time configurable), so the spec and the plans agree. The post geometry line records the canvas reading that corrected the dev plan.
