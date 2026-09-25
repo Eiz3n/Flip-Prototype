@@ -130,3 +130,9 @@ Append-only master history of all events in the Flip-Prototype directory.
 - **Location:** Working Files/
 - **Reason:** User request: verify every item is built and working at the end of each phase.
 - **Source Log:** —
+
+### [25-09-26 14:31] — CREATED | game/
+- **Action:** Scaffolded the Vite project: `package.json`, `package-lock.json`, `vite.config.js`, `.gitignore`, `index.html`, `README.md`, `src/sim/`, `public/fonts/`, `test/purity.test.js`.
+- **Location:** game/
+- **Reason:** Dev plan Task 1 — code lives in `game/`.
+- **Source Log:** Maintenance/setup-log.md (Structural Change Log)

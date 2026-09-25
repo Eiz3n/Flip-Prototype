@@ -169,6 +169,12 @@ Append every structural change. Dual-written with `Commands and Logs/directory-l
 - **Reason:** `&` and `#` in the old path break npm's Windows command shims and Vite/Vitest path-to-URL handling (plan review finding B1). User chose this location.
 - **Linkages/References affected:** None inside the repo — all internal links are relative and no file holds the old absolute path. Claude memory copied to the new path's project key. The internal folder structure is unchanged, so the Original File Structure Snapshot above still holds.
 
+### [25-09-26 14:31] — CREATED | game/
+- **Action:** Scaffolded the Vite project: `package.json`, `package-lock.json`, `vite.config.js`, `.gitignore`, `index.html`, `README.md`, `src/sim/`, `public/fonts/`, `test/purity.test.js`.
+- **Location:** `game/`
+- **Reason:** Dev plan Task 1 — code lives in `game/`.
+- **Linkages/References affected:** `game/README.md` maps the tree. Not in any GPS index — `game/` sits outside the indexed folders. The Original File Structure Snapshot above predates it.
+
 ---
 
 ## Reinstall History
