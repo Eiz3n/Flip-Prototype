@@ -16,15 +16,21 @@ export function formatTime(ms) {
 export function drawTabular(ctx, text, cx, y) {
   let cell = 0;
   for (const d of DIGITS) cell = Math.max(cell, ctx.measureText(d).width);
-  let total = 0;
-  for (const ch of text) total += isDigit(ch) ? cell : ctx.measureText(ch).width;
-  let x = cx - total / 2;
+  let x = cx - tabularWidth(ctx, text) / 2;
   ctx.textAlign = 'center';
   for (const ch of text) {
     const w = isDigit(ch) ? cell : ctx.measureText(ch).width;
     ctx.fillText(ch, x + w / 2, y);
     x += w;
   }
+}
+
+export function tabularWidth(ctx, text) {
+  let cell = 0;
+  for (const d of DIGITS) cell = Math.max(cell, ctx.measureText(d).width);
+  let total = 0;
+  for (const ch of text) total += isDigit(ch) ? cell : ctx.measureText(ch).width;
+  return total;
 }
 
 export function drawHud(ctx, hud, theme) {

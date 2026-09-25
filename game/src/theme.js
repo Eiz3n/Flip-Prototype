@@ -22,6 +22,7 @@ export const theme = deepFreeze({
     bodySize: 16,         // "tap to start", "tap to return"
     rowSize: 15,          // win panel rows
     smallSize: 13,        // "best —", "New best"
+    lineHeight: 1.6,      // Baloo 2's normal line box ≈ size × 1.6; tune in Task 8
   },
   render: { maxDpr: 2 },
   stroke: { ink: 2 },
