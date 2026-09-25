@@ -45,7 +45,8 @@ if (import.meta.env.DEV) {
 
 function resize() {
   const dpr = Math.min(window.devicePixelRatio || 1, theme.render.maxDpr);
-  const w = window.innerWidth, h = window.innerHeight;
+  // The canvas box, not the window: body padding keeps it inside the safe area.
+  const w = canvas.clientWidth, h = canvas.clientHeight;
   canvas.width = Math.round(w * dpr);
   canvas.height = Math.round(h * dpr);
   const R = config.room;

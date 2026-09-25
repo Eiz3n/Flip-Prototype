@@ -184,3 +184,15 @@ Append-only master history of all events in the Flip-Prototype directory.
 - **Location:** game/src/view/debug/
 - **Reason:** Art plan Task 8 — side-by-side check against the Flip Art canvas. Loaded only behind `import.meta.env.DEV`; never in the production bundle.
 - **Source Log:** Maintenance/setup-log.md (Structural Change Log)
+
+### [25-09-26 19:58] — EDITED | game/index.html, game/src/main.js
+- **Action:** Body padded by `env(safe-area-inset-*)`; text selection, iOS long-press callout, tap highlight and overscroll disabled; `resize()` now fits the room to the canvas box instead of the window.
+- **Location:** game/index.html, game/src/main.js
+- **Reason:** Mobile touch support — keep the room clear of notches and stop browser gestures on taps. Verified in 375 × 812 phone emulation; 121 tests pass.
+- **Source Log:** —
+
+### [25-09-26 19:58] — EDITED | wiki/concepts/collision-and-input.md, Commands and Logs/main-index.md
+- **Action:** Added "Mobile page setup" subsection; revised index description.
+- **Location:** wiki/concepts/collision-and-input.md, Commands and Logs/main-index.md
+- **Reason:** Document the mobile fixes above.
+- **Source Log:** Commands and Logs/wiki-log.md

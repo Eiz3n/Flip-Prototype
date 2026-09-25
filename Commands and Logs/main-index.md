@@ -19,7 +19,7 @@
 - [Human timing rules](../wiki/concepts/human-timing-rules.md) — the 350 ms budget, all nine rules, the `checkRooms.js` gate
 - [No passive clears](../wiki/concepts/no-passive-clears.md) — degenerate-play threat model, five structural rules, passive bots, authoring checklist
 - [Room transitions](../wiki/concepts/room-transitions.md) — entry and exit hook points, the transition sequence, restarts, room streaming
-- [Collision & input](../wiki/concepts/collision-and-input.md) — the three collision checks, obstacle response, tunneling margin, input spec and tap buffering
+- [Collision & input](../wiki/concepts/collision-and-input.md) — the three collision checks, obstacle response, tunneling margin, input spec, tap buffering and mobile page setup
 
 ## Source Summaries
 - [Flip — Technical Design Document](../wiki/sources/flip-tdd.md) — the complete TDD for the Flip prototype (2026-09-21); source of every page above
@@ -36,3 +36,7 @@
 - **Added:** 16 wiki pages indexed — 5 systems, 3 entities, 7 concepts, 1 source summary.
 - **Choices given:** page granularity coarse / as-proposed / finer; emphasis design vs implementation → **Chosen:** as-proposed, weighted toward implementation.
 - **Notes:** All pages derive from a single source, `Reference Files/Flip-TDD.md`. Cross-links are bidirectional per the Cross-Reference Rule. Index links use `../wiki/...` rather than the `wiki/...` form shown in the GPS §1.3 template — main-index.md lives in `Commands and Logs/`, so the template form resolves to `Commands and Logs/wiki/` and does not open. Verified by link check.
+
+### [25-09-26] — Collision & input description revised
+- **Added:** "mobile page setup" to the Collision & input entry description.
+- **Notes:** Page gained a Mobile page setup subsection (safe area, tap gestures) documenting code changes; no new pages.

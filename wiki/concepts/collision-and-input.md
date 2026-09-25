@@ -45,6 +45,16 @@ Not a problem, by arithmetic: at `maxSpeed` (480 units/s) a player moves **about
 - **`touch-action: none`** on the canvas stops mobile scroll and zoom.
 - **The first tap also unlocks Web Audio.**
 
+### Mobile page setup
+
+Implementation detail in `game/index.html` and `game/src/main.js`, not from the TDD:
+
+- **Safe area:** the body is padded by `env(safe-area-inset-*)` (the viewport meta sets `viewport-fit=cover`), so the room never sits under a notch or rounded corner. The padding shows the same background colour as the canvas letterbox, so no seam shows.
+- **Scaling reads the canvas box, not the window:** `resize()` fits the 360 × 640 room into `canvas.clientWidth × clientHeight`, i.e. inside the safe area.
+- **No browser gestures on a tap:** `user-select: none`, `-webkit-touch-callout: none` (iOS long-press menu), `-webkit-tap-highlight-color: transparent` and `overscroll-behavior: none` (pull-to-refresh).
+- **Multi-touch:** each new finger fires its own `pointerdown`, so a two-finger tap flips twice. Accepted as-is.
+- Checked in a 375 × 812 phone emulation with simulated notch insets; **not yet checked on a real device** — see the touch-latency risk in [Milestones & risks](../systems/milestones-and-risks.md).
+
 ### Tap buffering
 
 A tap made while the player is **still inside the launching hook point's field** — including the entry hook point's, after an entry launch — is **buffered** (`Player.bufferedTap`) and takes effect **the moment the player leaves that field**.
@@ -87,3 +97,8 @@ Owned by `src/camera.js`.
 ### [22-09-26] — Page created
 - **Added:** The three collision checks, obstacle response as ordered pseudocode, the tunneling arithmetic, full input spec, tap buffering, the ignored-input table, camera and shake values.
 - **Notes:** The ignored-input table merges the state machine's Input column with the death ready-beat rule stated separately in the source's "Entry and exit hook points" section.
+
+### [25-09-26] — Mobile page setup added
+- **Added:** "Mobile page setup" subsection: safe-area padding, scaling to the canvas box, disabled tap gestures, multi-touch note, verification status; link to Milestones & risks.
+- **Choices given:** Add safe-area + gesture fixes and verify in phone emulation → **Chosen:** Yes.
+- **Notes:** Documents code changes in `game/index.html` and `game/src/main.js`; not from an ingested source. Two-finger double flip left as-is.

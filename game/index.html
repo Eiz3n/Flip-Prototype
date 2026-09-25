@@ -6,6 +6,15 @@
     <title>Flip</title>
     <style>
       html, body { margin: 0; height: 100%; background: #EDE6D8; overflow: hidden; }
+      /* Keep the room clear of notches and rounded corners; the padding shows the same background. */
+      body {
+        box-sizing: border-box;
+        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        overscroll-behavior: none;
+        -webkit-user-select: none; user-select: none;
+        -webkit-touch-callout: none;
+        -webkit-tap-highlight-color: transparent;
+      }
       canvas { display: block; width: 100%; height: 100%; touch-action: none; }
     </style>
   </head>
