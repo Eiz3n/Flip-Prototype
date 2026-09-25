@@ -47,6 +47,8 @@ Tuning note from [Tuning parameters](../entities/tuning-parameters.md): `k_w`, `
 | Pastel colors hard to tell apart | Misread polarity | `+` and `−` marks in ink on every polarity shape; test with a color-blind simulator |
 | Mobile touch latency | Timing feels off | `pointerdown` events, latency compensation, test on a real phone **by day 5** |
 
+**Status, mobile touch latency (25-09-26):** real-phone test done on a Samsung Galaxy S22+ — flips feel instant and timing felt good, with `inputLatencyComp` at 0.06. See [Collision & input](../concepts/collision-and-input.md#mobile-page-setup).
+
 **Every mitigation is already a specified feature** — none is a "we'll watch for it". Each maps to a system:
 
 | Risk | Mitigating system |
@@ -76,3 +78,7 @@ Tuning note from [Tuning parameters](../entities/tuning-parameters.md): `k_w`, `
 ### [22-09-26] — Page created
 - **Added:** Milestone table and risk table verbatim, sequencing principle, day-to-page map, risk-to-system map, open questions status.
 - **Notes:** Both tables quoted exactly. The day-to-page and risk-to-system maps are navigation aids added during ingest. The observation that Room 1 tuning falls in days 1–3 rather than day 6 reconciles the milestone table with the tuning section; both are source statements.
+
+### [25-09-26] — Mobile touch latency status added
+- **Added:** Status line under the risk table: real-phone test on a Samsung Galaxy S22+ passed, flips feel instant; link to Collision & input.
+- **Notes:** Risk table left verbatim; status sits below it.
