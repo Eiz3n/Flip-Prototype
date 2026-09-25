@@ -166,3 +166,15 @@ Append-only master history of all events in the Flip-Prototype directory.
 - **Location:** .claude/
 - **Reason:** Dev plan Task 12 Step 9 — runs the dev server in the Claude desktop browser pane for the browser checks.
 - **Source Log:** Maintenance/setup-log.md (Structural Change Log)
+
+### [25-09-26 15:13] — CREATED | game/tools/
+- **Action:** Added the tools folder with `subset-font.md`, the exact Baloo 2 subset recipe.
+- **Location:** game/tools/
+- **Reason:** Art plan Task 1 Step 6 — lets anyone rebuild the font subset when new glyphs are needed.
+- **Source Log:** Maintenance/setup-log.md (Structural Change Log)
+
+### [25-09-26 15:13] — DELETED | game/public/fonts/.gitkeep
+- **Action:** Removed the placeholder; `public/fonts/` now holds `baloo2-subset.woff2` (17,980 bytes) and `OFL.txt`.
+- **Location:** game/public/fonts/.gitkeep
+- **Reason:** Art plan Task 1 Step 5 — folder has real files.
+- **Source Log:** Maintenance/setup-log.md (Structural Change Log)

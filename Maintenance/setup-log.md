@@ -205,6 +205,18 @@ Append every structural change. Dual-written with `Commands and Logs/directory-l
 - **Reason:** Dev plan Task 12 Step 9 — runs the dev server in the Claude desktop browser pane for the browser checks.
 - **Linkages/References affected:** Used by the preview tooling only. Not in any GPS index.
 
+### [25-09-26 15:13] — CREATED | game/tools/
+- **Action:** Added the tools folder with `subset-font.md`, the exact Baloo 2 subset recipe.
+- **Location:** `game/tools/`
+- **Reason:** Art plan Task 1 Step 6 — lets anyone rebuild the font subset when new glyphs are needed.
+- **Linkages/References affected:** Named in the art plan's File changes list. Not in any GPS index.
+
+### [25-09-26 15:13] — DELETED | game/public/fonts/.gitkeep
+- **Action:** Removed the placeholder; `public/fonts/` now holds `baloo2-subset.woff2` (17,980 bytes) and `OFL.txt`.
+- **Location:** `game/public/fonts/.gitkeep`
+- **Reason:** Art plan Task 1 Step 5 — folder has real files.
+- **Linkages/References affected:** `theme.font.file` (`./fonts/baloo2-subset.woff2`) now resolves; loaded by `src/view/fonts.js`. Not in any GPS index.
+
 ---
 
 ## Reinstall History
