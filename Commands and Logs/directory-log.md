@@ -208,3 +208,9 @@ Append-only master history of all events in the Flip-Prototype directory.
 - **Location:** wiki/concepts/collision-and-input.md
 - **Reason:** User supplied device details for the real-phone touch test.
 - **Source Log:** Commands and Logs/wiki-log.md
+
+### [25-09-26 20:12] — EDITED | wiki/concepts/collision-and-input.md, wiki/systems/milestones-and-risks.md
+- **Action:** Recorded that flip timing felt good and instant on the real phone; added a mobile touch latency status line under the risk table.
+- **Location:** wiki/concepts/collision-and-input.md, wiki/systems/milestones-and-risks.md
+- **Reason:** User reported timing feel from the S22+ test.
+- **Source Log:** Commands and Logs/wiki-log.md

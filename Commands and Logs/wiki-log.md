@@ -14,3 +14,6 @@ Recorded user's real-phone test: touch input works; notch padding and timing fee
 
 ## [25-09-26] update | Collision & input — test device recorded
 Recorded Samsung Galaxy S22+ (hole-punch) as the touch test device; safe-area padding still unproven on hardware, timing feel still open.
+
+## [25-09-26] update | Mobile touch timing confirmed
+Flip timing felt good, instant on touch (S22+); recorded in collision-and-input.md and as a status line under the milestones-and-risks risk table.
