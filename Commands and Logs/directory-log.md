@@ -196,3 +196,9 @@ Append-only master history of all events in the Flip-Prototype directory.
 - **Location:** wiki/concepts/collision-and-input.md, Commands and Logs/main-index.md
 - **Reason:** Document the mobile fixes above.
 - **Source Log:** Commands and Logs/wiki-log.md
+
+### [25-09-26 20:11] — EDITED | wiki/concepts/collision-and-input.md
+- **Action:** Replaced "not yet checked on a real device" with the real-phone touch result; listed notch padding and timing feel as still open.
+- **Location:** wiki/concepts/collision-and-input.md
+- **Reason:** User tested on a real phone: touch works fine.
+- **Source Log:** Commands and Logs/wiki-log.md

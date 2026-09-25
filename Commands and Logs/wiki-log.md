@@ -8,3 +8,6 @@ Ingested the 518-line Flip TDD from Reference Files/ into 16 wiki pages (5 syste
 
 ## [25-09-26] update | Collision & input — mobile page setup
 Added safe-area padding, canvas-box scaling, disabled tap gestures and multi-touch note to collision-and-input.md; main-index description revised.
+
+## [25-09-26] update | Collision & input — real-phone touch confirmed
+Recorded user's real-phone test: touch input works; notch padding and timing feel still unverified on hardware.
