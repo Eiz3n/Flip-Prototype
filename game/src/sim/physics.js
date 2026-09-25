@@ -1,7 +1,7 @@
 // Forces and integration. Formulas: wiki/concepts/polarity-force-model.md.
 // Mass is 1, so every force here is an acceleration. Nothing in this file allocates per call.
 import { wallPolAt } from './wave.js';
-import { clampLen } from './vec.js';
+import { clampLen, rotate } from './vec.js';
 
 const acc = { x: 0, y: 0 };
 
@@ -109,4 +109,101 @@ export function freeFlightStep(state, dt) {
   if (!inField && player.pol === wallPol) enforceSafeGap(player, cfg, xBefore);
 
   if (player.graceTimer > 0) player.graceTimer = Math.max(0, player.graceTimer - dt);
+}
+
+// ── Latch, orbit, launch ── wiki/concepts/latch-orbit-launch.md
+
+const DEG = Math.PI / 180;
+
+function placeOnOrbit(player, cfg) {
+  const h = player.latched;
+  const r = cfg.orbitRadius;
+  const c = Math.cos(player.theta), s = Math.sin(player.theta);
+  player.pos.x = h.pos.x + r * c;
+  player.pos.y = h.pos.y + r * s;
+  const w = player.orbitDir * player.omega * r;
+  player.vel.x = -w * s;
+  player.vel.y = w * c;
+}
+
+export function tryLatch(state) {
+  const { cfg, room, player } = state;
+  const p = player.pos;
+  const r2 = cfg.latchRadius * cfg.latchRadius;
+  for (const h of room.hookPoints) {
+    if (h.cooldown > 0 || player.pol * h.pol !== -1) continue;
+    const dx = p.x - h.pos.x, dy = p.y - h.pos.y;
+    if (dx * dx + dy * dy >= r2) continue;
+    const theta = Math.atan2(dy, dx);
+    const vt = -player.vel.x * Math.sin(theta) + player.vel.y * Math.cos(theta);
+    player.latched = h;
+    player.theta = theta;
+    player.orbitDir = vt >= 0 ? 1 : -1;
+    player.omega = Math.min(Math.max(Math.abs(vt) / cfg.orbitRadius, room.minOrbitSpeed), cfg.maxOrbitSpeed);
+    player.bufferHook = null;
+    player.bufferEntry = false;
+    player.bufferedTap = false;
+    placeOnOrbit(player, cfg);
+    return h;
+  }
+  return null;
+}
+
+export function orbitStep(state, dt) {
+  const { cfg, room, player } = state;
+  const min = room.minOrbitSpeed;
+  player.omega = min + (player.omega - min) * Math.exp(-cfg.orbitDrag * dt);
+  player.theta += player.orbitDir * player.omega * dt;
+  placeOnOrbit(player, cfg);
+}
+
+function angleDiff(from, to) {
+  let d = to - from;
+  while (d > Math.PI) d -= 2 * Math.PI;
+  while (d < -Math.PI) d += 2 * Math.PI;
+  return d;
+}
+
+// Rotate the launch velocity up to launchAssist degrees toward the best-aligned target, if one
+// lies within the cone. Targets: the exit mouth, and every hook point within maxReach that will
+// attract the player after the flip (opposite colour to the hook being left). Never the one left.
+function applyLaunchAssist(state, from) {
+  const { cfg, room, player } = state;
+  if (cfg.launchAssist <= 0) return;
+  const p = player.pos, v = player.vel;
+  const heading = Math.atan2(v.y, v.x);
+  const reach2 = cfg.maxReach * cfg.maxReach;
+  let best = angleDiff(heading, Math.atan2(cfg.shaft.exitMouthY - p.y, room.exitX - p.x));
+  for (const h of room.hookPoints) {
+    if (h === from || h.pol === from.pol) continue;
+    const dx = h.pos.x - p.x, dy = h.pos.y - p.y;
+    if (dx * dx + dy * dy > reach2) continue;
+    const d = angleDiff(heading, Math.atan2(dy, dx));
+    if (Math.abs(d) < Math.abs(best)) best = d;
+  }
+  if (Math.abs(best) > cfg.launchAssistCone * DEG) return;
+  const max = cfg.launchAssist * DEG;
+  rotate(v, Math.max(-max, Math.min(max, best)));
+}
+
+// Latency compensation (TDD rule 6) aims the launch from the angle inputLatencyComp seconds ago.
+// The player stays where it is on the orbit, so there is no visible jump backwards.
+export function launch(state) {
+  const { cfg, player } = state;
+  const h = player.latched;
+  const r = cfg.orbitRadius;
+  player.pos.x = h.pos.x + r * Math.cos(player.theta);
+  player.pos.y = h.pos.y + r * Math.sin(player.theta);
+  const aim = player.theta - player.orbitDir * player.omega * cfg.inputLatencyComp;
+  const c = Math.cos(aim), s = Math.sin(aim);
+  const w = player.orbitDir * player.omega * r;
+  player.vel.x = -w * s + cfg.launchImpulse * c;
+  player.vel.y = w * c + cfg.launchImpulse * s;
+  applyLaunchAssist(state, h);
+  clampLen(player.vel, cfg.maxSpeed);
+  player.pol = -player.pol;
+  player.latched = null;
+  h.cooldown = cfg.relatchCooldown;
+  player.bufferHook = h;
+  player.bufferedTap = false;
 }
