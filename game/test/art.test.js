@@ -42,3 +42,83 @@ test('theme carries the canvas tokens', () => {
   expect(theme.fx.trailAlphas).toEqual([0.55, 0.35, 0.2]);
   expect(theme.title.hooks).toHaveLength(4);
 });
+
+import { drawMark } from '../src/view/art/marks.js';
+import { drawHookPoint } from '../src/view/art/hookPoint.js';
+import { drawPlayer, drawTether } from '../src/view/art/player.js';
+
+const calls = (ctx, name) => ctx.log.filter((e) => e.op === 'call' && e.name === name);
+const radii = (ctx) => calls(ctx, 'arc').map((e) => e.args[2]);
+
+function hookAt(pol) { return { pos: { x: 100, y: 200 }, pol, fieldRadius: 70 }; }
+
+function fxStub(overrides = {}) {
+  return {
+    trail: { x: new Float32Array(3), y: new Float32Array(3), pol: new Int8Array(3), count: 0, head: 0 },
+    flipRing: { t: 0 },
+    ...overrides,
+  };
+}
+
+test('marks are Baloo 2 glyphs in ink: + and U+2212', () => {
+  const ctx = recordingCtx();
+  drawMark(ctx, 50, 50, 17, -1, theme);
+  drawMark(ctx, 50, 50, 10, +1, theme);
+  const [minus, plus] = calls(ctx, 'fillText');
+  expect(minus.args[0]).toBe('−');
+  expect(minus.font).toBe(`700 17px ${theme.font.family}`);
+  expect(minus.fill).toBe('#26252E');
+  expect(plus.args[0]).toBe('+');
+  expect(plus.font).toBe(`700 10px ${theme.font.family}`);
+});
+
+test('hook point: r 14 fill, stroke inside at r 13, field ring idle vs inside', () => {
+  const idle = recordingCtx();
+  drawHookPoint(idle, hookAt(-1), false, 0, theme);
+  expect(radii(idle)).toEqual(expect.arrayContaining([69.5, 14, 13]));
+  const ring = calls(idle, 'stroke')[0];
+  expect([ring.alpha, ring.lineWidth]).toEqual([0.2, 1]);
+  expect(calls(idle, 'fill').some((e) => e.fill === '#E27D7D')).toBe(true);
+  expect(calls(idle, 'fillText')[0].args[0]).toBe('−');
+
+  const inside = recordingCtx();
+  drawHookPoint(inside, hookAt(+1), true, 0, theme);
+  expect(radii(inside)).toContain(69);
+  const r2 = calls(inside, 'stroke')[0];
+  expect([r2.alpha, r2.lineWidth]).toEqual([0.5, 2]);
+});
+
+test('latch pop peaks at 1.1× halfway through', () => {
+  const ctx = recordingCtx();
+  drawHookPoint(ctx, hookAt(+1), false, 0.5, theme);
+  expect(radii(ctx).some((r) => Math.abs(r - 15.4) < 1e-9)).toBe(true);   // 14 × 1.1
+});
+
+test('player: r 8 body, stroke inside at 7, 10 px mark, 3-dot stepped trail', () => {
+  const fx = fxStub();
+  fx.trail.x.set([100, 100, 100]); fx.trail.y.set([230, 220, 210]); fx.trail.pol.set([1, 1, 1]);
+  fx.trail.count = 3; fx.trail.head = 0;               // newest at index 2
+  const ctx = recordingCtx();
+  drawPlayer(ctx, 100, 200, { pol: +1 }, fx, theme);
+  const r = radii(ctx);
+  expect(r.slice(0, 3)).toEqual([4, 3.5, 3]);          // newest (largest) first
+  expect(calls(ctx, 'fill').slice(0, 3).map((e) => e.alpha)).toEqual([0.55, 0.35, 0.2]);
+  expect(r).toEqual(expect.arrayContaining([8, 7]));
+  expect(calls(ctx, 'fillText')[0].font).toBe(`700 10px ${theme.font.family}`);
+});
+
+test('flip ring grows from the player edge and fades', () => {
+  const ctx = recordingCtx();
+  drawPlayer(ctx, 100, 200, { pol: -1 }, fxStub({ flipRing: { t: theme.fx.flipRingTime / 2 } }), theme);
+  const ring = radii(ctx).at(-1);
+  expect(ring).toBeGreaterThan(8);
+  expect(ring).toBeLessThan(18);
+});
+
+test('tether: 1 px ink at 50 % from player to hook centre', () => {
+  const ctx = recordingCtx();
+  drawTether(ctx, 120, 200, hookAt(-1), theme);
+  const s = calls(ctx, 'stroke')[0];
+  expect([s.stroke, s.alpha, s.lineWidth]).toEqual(['#26252E', 0.5, 1]);
+  expect(calls(ctx, 'lineTo')[0].args).toEqual([100, 200]);
+});

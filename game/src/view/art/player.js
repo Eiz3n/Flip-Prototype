@@ -1,5 +1,8 @@
 import { config } from '../../config.js';
+import { easeOutCubic } from '../anim/ease.js';
 import { drawMark, polColor } from './marks.js';
+
+const TAU = Math.PI * 2;
 
 export function drawTether(ctx, x, y, hook, theme) {
   ctx.strokeStyle = theme.color.ink;
@@ -12,33 +15,43 @@ export function drawTether(ctx, x, y, hook, theme) {
   ctx.globalAlpha = 1;
 }
 
-export function drawPlayer(ctx, x, y, player, fx, theme) {
-  const r = config.playerRadius;
-  const tr = fx.trail;
-  for (let i = 0; i < tr.count; i++) {
+function drawTrail(ctx, fx, theme) {
+  const tr = fx.trail, f = theme.fx;
+  const n = Math.min(tr.count, f.trailRadii.length);
+  for (let i = 0; i < n; i++) {
     const idx = (tr.head - 1 - i + tr.x.length) % tr.x.length;   // newest first
-    ctx.globalAlpha = 1 - (i + 1) / (tr.count + 1);                 // stepped, one level per dot
+    ctx.globalAlpha = f.trailAlphas[i];
     ctx.fillStyle = polColor(theme, tr.pol[idx]);
     ctx.beginPath();
-    ctx.arc(tr.x[idx], tr.y[idx], r * 0.5, 0, Math.PI * 2);
+    ctx.arc(tr.x[idx], tr.y[idx], f.trailRadii[i], 0, TAU);
     ctx.fill();
   }
   ctx.globalAlpha = 1;
+}
 
+export function drawPlayer(ctx, x, y, player, fx, theme) {
+  drawTrail(ctx, fx, theme);
+
+  const r = config.playerRadius;
+  const w = theme.stroke.ink;
   ctx.fillStyle = polColor(theme, player.pol);
-  ctx.strokeStyle = theme.color.ink;
-  ctx.lineWidth = theme.stroke.ink;
   ctx.beginPath();
-  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.arc(x, y, r, 0, TAU);
   ctx.fill();
+  ctx.strokeStyle = theme.color.ink;
+  ctx.lineWidth = w;
+  ctx.beginPath();
+  ctx.arc(x, y, r - w / 2, 0, TAU);
   ctx.stroke();
-  drawMark(ctx, x, y, r, player.pol, theme);
+  drawMark(ctx, x, y, theme.font.markPlayer, player.pol, theme);
 
   if (fx.flipRing.t > 0) {
-    const k = 1 - fx.flipRing.t / theme.fx.flipRingTime;
-    ctx.globalAlpha = 1 - k;
+    const e = easeOutCubic(1 - fx.flipRing.t / theme.fx.flipRingTime);
+    ctx.globalAlpha = 1 - e;
+    ctx.strokeStyle = theme.color.ink;
+    ctx.lineWidth = w;
     ctx.beginPath();
-    ctx.arc(x, y, r + k * theme.fx.flipRingGrow, 0, Math.PI * 2);
+    ctx.arc(x, y, r + e * theme.fx.flipRingGrow, 0, TAU);
     ctx.stroke();
     ctx.globalAlpha = 1;
   }
