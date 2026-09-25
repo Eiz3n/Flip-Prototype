@@ -42,8 +42,9 @@ function setup() {
 }
 
 test('formatTime', () => {
-  expect(formatTime(0)).toBe('0:00.00');
-  expect(formatTime(83456)).toBe('1:23.45');
+  expect(formatTime(0)).toBe('0:00.0');
+  expect(formatTime(83456)).toBe('1:23.4');
+  expect(formatTime(18449)).toBe('0:18.4');
 });
 
 test('every state renders without error and without gradients or shadows', () => {

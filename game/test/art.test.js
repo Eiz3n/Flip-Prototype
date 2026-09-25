@@ -288,3 +288,39 @@ test('a tap mid-flip reverses from the current angle, with no jump', () => {
   updateEffects(fx, config.timing.titleFlipTime, w);
   expect(titleFlipValue(fx)).toBe(1);
 });
+
+import { drawHud, drawTabular, formatTime } from '../src/view/art/hud.js';
+
+test('formatTime shows tenths like the canvas', () => {
+  expect(formatTime(62_799)).toBe('1:02.7');
+  expect(formatTime(600_000)).toBe('10:00.0');
+});
+
+test('drawTabular puts every character in its own slot, centred on cx', () => {
+  const ctx = recordingCtx();
+  ctx.font = `700 15px ${theme.font.family}`;
+  drawTabular(ctx, '0:18.4', 180, 24);
+  const xs = calls(ctx, 'fillText').map((e) => e.args[1]);
+  expect(calls(ctx, 'fillText').map((e) => e.args[0])).toEqual(['0', ':', '1', '8', '.', '4']);
+  expect(xs.reduce((a, b) => a + b, 0) / xs.length).toBeCloseTo(180);
+  for (let i = 1; i < xs.length; i++) expect(xs[i]).toBeGreaterThan(xs[i - 1]);
+});
+
+test('HUD row: room left, tabular timer centre, deaths right, canvas sizes', () => {
+  const ctx = recordingCtx();
+  drawHud(ctx, { room: 1, rooms: 2, timeMs: 18_400, deaths: 2, roomPop: 0 }, theme);
+  const texts = calls(ctx, 'fillText');
+  const room = texts.find((e) => e.args[0] === '1 / 2');
+  const deaths = texts.find((e) => e.args[0] === '× 2');
+  expect(room.font).toBe(`700 13px ${theme.font.family}`);
+  expect(deaths.font).toBe(`700 13px ${theme.font.family}`);
+  expect(deaths.args[1]).toBe(340);
+  expect(texts.filter((e) => e.font === `700 15px ${theme.font.family}`).map((e) => e.args[0]).join('')).toBe('0:18.4');
+});
+
+test('the room number pops while roomPop runs', () => {
+  const ctx = recordingCtx();
+  drawHud(ctx, { room: 1, rooms: 2, timeMs: 0, deaths: 0, roomPop: theme.fx.roomPopTime / 2 }, theme);
+  const s = calls(ctx, 'scale')[0].args[0];
+  expect(s).toBeCloseTo(1.3);                                          // sin(π/2) peak
+});
