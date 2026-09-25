@@ -148,3 +148,9 @@ Append-only master history of all events in the Flip-Prototype directory.
 - **Location:** game/src/sim/.gitkeep
 - **Reason:** Dev plan Task 4 Step 8 — folder has real files.
 - **Source Log:** Maintenance/setup-log.md (Structural Change Log)
+
+### [25-09-26 14:56] — CREATED | game/src/view/, game/src/view/anim/
+- **Action:** Added the view layer folders: `src/view/` (`camera.js`, `particles.js`) and `src/view/anim/` (`ease.js`, `effects.js`, the event → animation registry).
+- **Location:** game/src/view/
+- **Reason:** Dev plan Task 11 — view core; the view reads sim state and never changes it.
+- **Source Log:** Maintenance/setup-log.md (Structural Change Log)
