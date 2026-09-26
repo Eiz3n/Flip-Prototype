@@ -1,0 +1,6 @@
+Phase:    Build (dev plan)
+Task:     13
+Area:     .claude/launch.json
+Change:   vite preview entry for checking the production build
+Why:      Final check: 84 tests, 27 KB build, no network requests
+See also: —
