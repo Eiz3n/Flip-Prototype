@@ -1,0 +1,6 @@
+Phase:    Build (dev plan)
+Task:     7
+Area:     src/sim/collision.js
+Change:   Obstacle and post collision, exit capture, wall and stall death, near miss
+Why:      Friction once per contact; per-step friction pinned players under room 1's bar
+See also: —
