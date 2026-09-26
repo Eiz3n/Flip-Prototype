@@ -1,0 +1,6 @@
+Phase:    Build (dev plan)
+Task:     4
+Area:     src/sim/, src/levels/
+Change:   Player / HookPoint / Obstacle, one file per room, validator, Room with exact reset
+Why:      Each room editable on its own; every attempt identical
+See also: —
