@@ -1,0 +1,6 @@
+Phase:    Art (art plan)
+Task:     Fix
+Area:     anim/effects.js
+Change:   Newest trail dot skipped so none sits under the player
+Why:      The dot hidden by the player made the visible trail look short
+See also: 9258f12
