@@ -214,3 +214,9 @@ Append-only master history of all events in the Flip-Prototype directory.
 - **Location:** wiki/concepts/collision-and-input.md, wiki/systems/milestones-and-risks.md
 - **Reason:** User reported timing feel from the S22+ test.
 - **Source Log:** Commands and Logs/wiki-log.md
+
+### [26-09-26 13:10] — EDITED | README.md
+- **Action:** Rewrote README for current state: Vercel play link, local run commands, stack, code layout, spec links, progress to date. Removed wiki layout and build-order sections.
+- **Location:** README.md
+- **Reason:** User request ahead of the Dev → main merge. Decision Log omitted from README at user's request.
+- **Source Log:** —

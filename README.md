@@ -1,81 +1,89 @@
 # Flip — Prototype
 
+**▶ Play it: [flip-playtest.vercel.app](https://flip-playtest.vercel.app)** (best on a phone, portrait)
+
 A one-button browser game: tap to flip your polarity, swinging between floating hook points to climb through rooms whose walls change charge in a visible wave.
 
-Built as a design test. 10 hand-made rooms, playable start to finish, shipped to itch.io.
+Built as a design test.
 
-**Status:** specification complete, implementation not started.
+**Status:** a small set of playable rooms, start to finish (title → rooms → win). Tested on a real phone.
 
 ## The game
 
-Get launched off the entry hook point. Tap to become the **opposite** colour of the next hook point to latch onto it, tap to **match** its colour to push off it, and keep your colour matched to the walls so they cushion you instead of pulling you in. Steer around obstacles, latch onto the room's exit hook point to move up.
+Get launched up through the floor hatch. Tap to become the **opposite** colour of the next hook point to latch onto it, tap to **match** its colour to push off it, and keep your colour matched to the walls so they cushion you instead of pulling you in. Steer around obstacles and fly up through the doorway in the top wall to reach the next room.
 
-Touching a wall restarts the room. Touching an obstacle only kills your momentum. Score is total time to clear all 10 rooms — lower is better.
+Touching a wall restarts the room. Touching an obstacle only kills your momentum. If you are stuck against something for 3 s, that also counts as a death. Score is total time to clear all rooms. Lower is better, and your best time is saved.
+
+## Play it locally
+
+```bash
+cd game
+npm install
+npm run dev      # play at the printed localhost URL
+npm test         # 121 tests: sim, bots, game, view, art
+npm run build    # static dist/ (~54 KB)
+```
+
+Dev-only URL flags (never in a build): `?pose=title|room1|room2|win` freezes the scene to match an artboard on the art canvas, and `?cb=protan|deutan|tritan` applies a colour-blindness filter.
 
 ## Stack
 
 | | |
 |---|---|
 | Language | JavaScript (ES2020), ES modules |
-| Rendering | Canvas 2D — no engine |
-| Audio | Web Audio API, synthesised |
-| Build | Vite → static `dist/` |
+| Rendering | Canvas 2D, no engine, DPR capped at 2 |
+| Build | Vite → static `dist/`, `base: './'` |
+| Hosting | Vercel |
+| Tests | Vitest, headless |
 | Storage | `localStorage`, best time only |
-| Resolution | 360 × 640 logical, portrait |
-| Targets | 60 fps mid-range phone, < 200 KB |
+| Resolution | 360 × 640 logical, portrait, kept inside the phone's safe area |
+| Font | Baloo 2 subset, self-hosted, no network requests |
+| Targets | 60 fps on a mid-range phone, < 200 KB |
 
-## Repository layout
+## Code layout
 
-This repo uses the **GPS** knowledge-base system. The wiki is the working reference; the source document is read-only.
+All game code lives in [`game/`](game/). [`game/README.md`](game/README.md) is the full map, including how to add a room.
 
 ```
-CLAUDE.md              Agent schema — generated, read at session start
-wiki/                  Synthesised reference pages
-  systems/               Loop, rooms, rendering, build, milestones
-  entities/              Class schemas, tuning table, project structure
-  concepts/              Force model, wave, latch/launch, timing rules
-  sources/               One summary per ingested source
-Reference Files/       Read-only source material (the TDD lives here)
-Working Files/         In-progress documents
-Output/                Final exports only
-raw/                   Drop new sources here, then ingest them
-Commands and Logs/     Indexes and append-only logs
-Maintenance/           AI-managed — do not edit, move or delete
+game/src/
+  config.js        Every gameplay number
+  theme.js         Every colour, font, size and effect timing (synced from the art canvas)
+  levels/          One file per room; index.js sets the order; validate.js checks them
+  sim/             Pure simulation: no DOM, no clock, no allocation in step()
+  game.js          State machine, timer, deaths, best time
+  view/art/        One module per drawable
+  view/anim/       Turns game events into animations
+  view/debug/      ?pose and ?cb dev tools
+game/test/         Sim, physics, latch, collision, bots, game, render, art tests
 ```
 
-**Start at [`Commands and Logs/main-index.md`](Commands%20and%20Logs/main-index.md)** — it indexes all 16 wiki pages.
+The main rules: `sim/` stays pure so it can be tested and run by bots with no browser. Numbers go in `config.js` and styling in `theme.js`, never inline. Each room's values live only in its own level file.
 
 ## Where the spec lives
 
-The full technical design document is [`Reference Files/Flip-TDD.md`](Reference%20Files/Flip-TDD.md). It is the single source of truth for every number in this repo.
-
-It has been synthesised into the wiki, weighted toward implementation. Useful entry points:
-
-- [Polarity & force model](wiki/concepts/polarity-force-model.md) — the one sign check the whole game reduces to
-- [Latch, orbit & launch](wiki/concepts/latch-orbit-launch.md) — the core verb
-- [Human timing rules](wiki/concepts/human-timing-rules.md) — the nine constraints, machine-verified
-- [Tuning parameters](wiki/entities/tuning-parameters.md) — the full `config.js` table
-- [Rooms & difficulty](wiki/systems/rooms-and-difficulty.md) — the 10-room plan
-
-## Build order
-
-The plan front-loads the feel of latch and launch — if that is not fun by day 3, nothing built on top will fix it.
-
-| Day | Milestone |
+| Document | What it covers |
 |---|---|
-| 1 | Loop, input, Room 1 shell, wall pull and cushion, updraft |
-| 2–3 | Hook point fields, latch, orbit, launch, latency compensation |
-| 4 | Wall wave, front line, free-flight grace, obstacles |
-| 5 | Entry/exit hook points, camera pan, restart, win screen, run timer |
-| 6 | `tools/checkRooms.js` and rooms 4–10 |
-| 7 | Art pass, feedback, audio |
-| 8 | itch.io build, device test, playtest |
+| [`Reference Files/Flip-TDD.md`](Reference%20Files/Flip-TDD.md) | Full technical design. The source of truth for behaviour and every number |
+| [Flip Art canvas](https://claude.ai/artifact/51tn6oK5ZfHmTbD2dnK5fw) ([offline export](Reference%20Files/Flip%20Art.html)) | The source of truth for looks. Wins over the TDD on colour, font and size |
+| [Design spec](Working%20Files/2026-09-23-flip-v1-design.md) | Rooms, deviations from the TDD and their reasons |
+| [Dev plan](Working%20Files/2026-09-23-flip-v1-dev-plan.md) | 13 test-first tasks, and which files the code owns and which the art owns |
+| [Art plan](Working%20Files/2026-09-25-flip-v1-art-plan.md) | 9 test-first tasks: font, canvas tokens, sprites, HUD, screens, animations, poses |
 
-Day 1 is done when a cushioned player cannot touch a wall and a pulled one can.
+## Progress
+
+| Milestone | Status |
+|---|---|
+| Loop, input, wall pull and cushion, updraft | ✅ |
+| Hook point fields, latch, orbit, launch, latency compensation | ✅ |
+| Wall wave, front line, free-flight grace, obstacles | ✅ |
+| Entry hatch and exit doorway, camera pan, restart, win screen, run timer | ✅ |
+| Art pass and feedback effects | ✅ |
+| Real-phone touch test | ✅ Samsung Galaxy S22+: flips feel instant, timing good at `inputLatencyComp` 0.06 |
+| Playtest build on Vercel | ✅ |
 
 ## Release gate
 
-No build ships until `tools/checkRooms.js` passes on all 10 rooms: every launch window, every catch window, and **both passive bots failing to reach the exit**. See [No passive clears](wiki/concepts/no-passive-clears.md).
+`npm test` must pass before anything ships: the room validator plus the idle, drift and repel bots. None of the bots may clear a room.
 
 ## Branches
 
@@ -83,15 +91,6 @@ No build ships until `tools/checkRooms.js` passes on all 10 rooms: every launch 
 |---|---|
 | `Dev` | Default. App-building work goes here. |
 | `main` | Reviewed and merged state. |
-| `gps-wiki-setup` | Merged; retained as history. |
+| `gps-wiki-setup` | Merged; kept as history. |
 
-PRs default to targeting `Dev`. Pass `--base main` explicitly for anything meant to land on `main`.
-
-## Working with the wiki
-
-The wiki is maintained, not hand-edited ad hoc. `CLAUDE.md` holds the full ruleset. In short:
-
-- Drop a new source in `raw/`, then ingest it — it becomes wiki pages plus a source summary.
-- Every `.md` carries an append-only Decision Log at the bottom. Read it before editing.
-- Structural changes dual-write to `Maintenance/setup-log.md` and `Commands and Logs/directory-log.md`.
-- `Maintenance/` is AI-managed. Do not edit, move or delete anything in it.
+PRs target `Dev` by default. Pass `--base main` explicitly for anything meant to land on `main`.
