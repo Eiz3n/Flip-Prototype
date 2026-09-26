@@ -1,0 +1,6 @@
+Phase:    Art (art plan)
+Task:     8
+Area:     view/debug/, view/art/
+Change:   ?pose and ?cb dev tools; text baselines corrected to match the canvas
+Why:      Side-by-side check found text about 0.1 em too high
+See also: —
