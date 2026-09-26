@@ -1,0 +1,6 @@
+Phase:    Art (art plan)
+Task:     2
+Area:     src/theme.js, test/art.test.js
+Change:   Theme re-synced from the canvas; palette-only test, recording context, test scenes
+Why:      The canvas is the source of truth for looks; the test locks it
+See also: —
