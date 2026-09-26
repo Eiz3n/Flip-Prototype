@@ -1,0 +1,6 @@
+Phase:    Build (dev plan)
+Task:     12
+Area:     src/view/, src/main.js
+Change:   Blockout art modules, renderer, screens, font loader, boot loop
+Why:      First playable build in the browser
+See also: 0b912a7..229361d (art replaces blockout)
