@@ -1,0 +1,6 @@
+Phase:    Build (dev plan)
+Task:     6
+Area:     src/sim/physics.js
+Change:   Latch, orbit bleed, launch, launch assist, latency compensation
+Why:      The core verb; orbit half of the force model
+See also: f6fc231
