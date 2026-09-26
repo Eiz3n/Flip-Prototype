@@ -223,6 +223,12 @@ Append every structural change. Dual-written with `Commands and Logs/directory-l
 - **Reason:** Art plan Task 8 — side-by-side check against the Flip Art canvas. Loaded only behind `import.meta.env.DEV`; never in the production bundle.
 - **Linkages/References affected:** Imported dynamically by `game/src/main.js` in dev builds only. Not in any GPS index.
 
+### [26-09-26 13:35] — CREATED | .gitattributes
+- **Action:** Created `.gitattributes` marking `Reference Files/Flip Art.html` as `linguist-documentation`.
+- **Location:** .gitattributes
+- **Reason:** GitHub counted the 3.3 MB art-canvas export as code (HTML 96%); the language bar should show the JavaScript game.
+- **Linkages/References affected:** None. `reference-index.md` is unchanged, and the file is only excluded from GitHub's language stats.
+
 ---
 
 ## Reinstall History
