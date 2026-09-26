@@ -1,0 +1,6 @@
+Phase:    Build (dev plan)
+Task:     2
+Area:     src/config.js, src/theme.js
+Change:   All gameplay numbers in config, all visual values in theme, both frozen
+Why:      No magic numbers; a stray write throws instead of retuning the game
+See also: —
