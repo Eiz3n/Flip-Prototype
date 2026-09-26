@@ -1,0 +1,6 @@
+Phase:    Mobile
+Task:     —
+Area:     index.html, src/main.js, wiki
+Change:   Room kept inside the notch safe area; selection, callout and overscroll disabled
+Why:      A tap should only flip polarity
+See also: 95b7028
