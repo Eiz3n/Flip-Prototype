@@ -1,0 +1,6 @@
+Phase:    Build (dev plan)
+Task:     3
+Area:     src/sim/vec.js, src/sim/wave.js
+Change:   Vector helpers that don't allocate; two-band wall wave formula
+Why:      The step loop must not allocate; the wave drives wall polarity
+See also: —
