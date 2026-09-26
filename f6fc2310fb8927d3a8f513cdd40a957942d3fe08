@@ -1,0 +1,6 @@
+Phase:    Build (dev plan)
+Task:     5
+Area:     src/sim/physics.js
+Change:   Hook fields, wall pull and cushion, safeGap clamp, updraft, wave grace
+Why:      Free-flight half of the force model
+See also: 7d2fdae
