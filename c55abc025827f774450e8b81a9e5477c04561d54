@@ -1,0 +1,6 @@
+Phase:    Build (dev plan)
+Task:     1
+Area:     game/
+Change:   Vite project, scripts, sim purity test, game/README.md
+Why:      Base for all code; purity test guards sim/ from the start
+See also: —
