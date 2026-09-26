@@ -2,6 +2,8 @@
 
 **▶ Play it: [flip-playtest.vercel.app](https://flip-playtest.vercel.app)** (best on a phone, portrait)
 
+**Controls:** click, tap or press Space to flip. That's the only input.
+
 A one-button browser game: tap to flip your polarity, swinging between floating hook points to climb through rooms whose walls change charge in a visible wave.
 
 Built as a design test.
@@ -85,12 +87,16 @@ The main rules: `sim/` stays pure so it can be tested and run by bots with no br
 
 `npm test` must pass before anything ships: the room validator plus the idle, drift and repel bots. None of the bots may clear a room.
 
+## How this was built with AI
+
+Built with Claude Code as a pair programmer. Commits it helped write carry a `Co-Authored-By: Claude` line.
+
+- **Spec first.** The [TDD](Reference%20Files/Flip-TDD.md) was ingested into an LLM-maintained wiki (`wiki/`, indexed in [`Commands and Logs/main-index.md`](Commands%20and%20Logs/main-index.md)), so each session starts from the same source of truth instead of re-reading the full spec.
+- **Plans before code.** The [dev plan](Working%20Files/2026-09-23-flip-v1-dev-plan.md) and [art plan](Working%20Files/2026-09-25-flip-v1-art-plan.md) break the build into small test-first tasks. Each task starts with a failing test.
+- **Bots as a release gate.** Idle, drift and repel bots play every room headlessly. If a bot can clear a room without real input, the room is too easy and the build fails.
+- **Look set on an art canvas.** Colours, font and sizes were designed on a shared [art canvas](https://claude.ai/artifact/51tn6oK5ZfHmTbD2dnK5fw) and synced into `theme.js`. `?pose=` renders the matching artboard in-game for side-by-side checks.
+- **Real-device checks by hand.** Touch feel and flip timing were tested on a real phone. Those results were fed back into the wiki and `config.js`.
+
 ## Branches
 
-| Branch | Role |
-|---|---|
-| `Dev` | Default. App-building work goes here. |
-| `main` | Reviewed and merged state. |
-| `gps-wiki-setup` | Merged; kept as history. |
-
-PRs target `Dev` by default. Pass `--base main` explicitly for anything meant to land on `main`.
+`main` is the submitted, protected state. `Dev` is where work continues.

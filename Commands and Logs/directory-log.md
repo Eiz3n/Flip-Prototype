@@ -220,3 +220,15 @@ Append-only master history of all events in the Flip-Prototype directory.
 - **Location:** README.md
 - **Reason:** User request ahead of the Dev → main merge. Decision Log omitted from README at user's request.
 - **Source Log:** —
+
+### [26-09-26 13:35] — CREATED | .gitattributes
+- **Action:** Created `.gitattributes` marking `Reference Files/Flip Art.html` as `linguist-documentation`.
+- **Location:** .gitattributes
+- **Reason:** Keep the art-canvas export out of GitHub's language bar so the repo reads as a JavaScript game.
+- **Source Log:** Maintenance/setup-log.md
+
+### [26-09-26 13:35] — EDITED | README.md
+- **Action:** Added a controls line and a "How this was built with AI" section; cut the Branches table down to one line.
+- **Location:** README.md
+- **Reason:** Polish before the Lila submission. As with the previous README edit, no Decision Log was added to the README.
+- **Source Log:** —
