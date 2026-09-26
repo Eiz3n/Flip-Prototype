@@ -1,0 +1,6 @@
+Phase:    Build (dev plan)
+Task:     9
+Area:     test/bots.test.js
+Change:   Idle, drift and repel bots; 60 s per room
+Why:      Release gate: no room can be cleared without real play
+See also: —
