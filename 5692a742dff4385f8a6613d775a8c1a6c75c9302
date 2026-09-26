@@ -1,0 +1,6 @@
+Phase:    Docs
+Task:     —
+Area:     README.md
+Change:   First landing README: game, stack, layout, build order, branches
+Why:      Repo had no entry point for readers
+See also: 9d1a202 (rewritten)
