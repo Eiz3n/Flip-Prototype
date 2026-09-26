@@ -1,0 +1,6 @@
+Phase:    Art (art plan)
+Task:     5
+Area:     view/art/obstacle, anim/effects, particles
+Change:   Obstacles, launch puff, death burst, trail sampled by distance
+Why:      Replaces the blockout
+See also: 6fadfba (trail fix)
