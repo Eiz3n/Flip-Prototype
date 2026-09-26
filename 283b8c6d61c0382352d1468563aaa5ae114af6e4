@@ -1,0 +1,6 @@
+Phase:    Docs
+Task:     —
+Area:     README.md, .gitattributes
+Change:   Controls line, AI-build section, branches trimmed; art export excluded from linguist stats
+Why:      Repo polish before the Lila submission
+See also: 9d1a202
