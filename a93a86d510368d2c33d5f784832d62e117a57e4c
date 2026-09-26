@@ -1,0 +1,6 @@
+Phase:    Art (art plan)
+Task:     6
+Area:     view/art/hud.js
+Change:   Tenths timer in tabular digits, room-number pop
+Why:      Timer digits don't shift as the time changes
+See also: —
