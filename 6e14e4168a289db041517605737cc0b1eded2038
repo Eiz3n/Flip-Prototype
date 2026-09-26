@@ -1,0 +1,6 @@
+Phase:    Build (dev plan)
+Task:     10
+Area:     src/game.js, src/input.js
+Change:   Title -> playing -> dying / transition -> win, run timer, best time, input
+Why:      Turns the sim into a game; the timer ignores slow-mo
+See also: —
