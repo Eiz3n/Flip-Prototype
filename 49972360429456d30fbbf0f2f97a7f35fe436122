@@ -1,0 +1,6 @@
+Phase:    Build (dev plan)
+Task:     8
+Area:     src/sim/world.js
+Change:   The sim's single entry point: tap buffering, hatch launch, room events
+Why:      One allocation-free step() for game and bots alike
+See also: —
