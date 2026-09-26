@@ -1,0 +1,6 @@
+Phase:    Build (dev plan)
+Task:     11
+Area:     src/view/
+Change:   Camera pan and shake, 200-slot particle pool, events -> effects registry
+Why:      Visual effects live in one place and never write to game state
+See also: —
