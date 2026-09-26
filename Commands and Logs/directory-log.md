@@ -34,3 +34,189 @@ Append-only master history of all events in the Flip-Prototype directory.
 - **Location:** raw/, Output/Deprecated/, Output/MD Files/
 - **Reason:** Git does not track empty directories; the GPS structure requires all three.
 - **Source Log:** Maintenance/setup-log.md
+
+### [22-09-26 15:28] — CREATED | README.md
+- **Action:** Added project README at repository root — game summary, stack, repo layout, spec entry points, build order, branch roles, wiki working rules.
+- **Location:** README.md
+- **Reason:** Repository had no landing documentation.
+- **Source Log:** Maintenance/setup-log.md
+
+### [23-09-26 20:24] — CREATED | Working Files/2026-09-23-flip-v1-design.md
+- **Action:** Wrote the Flip v1 design spec (2 custom rooms, art from the Claude Design canvas "Flip Art"). Indexed in working-files-index.md.
+- **Location:** Working Files/2026-09-23-flip-v1-design.md
+- **Reason:** Brainstorming session output; user asked for the spec before implementation.
+- **Source Log:** Working Files/working-files-index.md
+
+### [23-09-26 21:24] — CREATED | Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Action:** Wrote the Flip v1 dev implementation plan (13 TDD tasks: engine, config/theme, per-room level files, sim, state machine, view core, blockout art slots, build gate). Indexed in working-files-index.md.
+- **Location:** Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Reason:** User asked for separate dev and art implementation plans; this is the dev plan.
+- **Source Log:** Working Files/working-files-index.md
+
+### [23-09-26 21:59] — EDITED | Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Action:** Applied the nine minor findings from the subagent plan review (tests, validator rules, repel bot, art-contract normalisation, next-room reset, launch assist and latency changes, font and HUD notes).
+- **Location:** Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Reason:** User asked to fix all minor review findings.
+- **Source Log:** —
+
+### [23-09-26 22:14] — EDITED | Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Action:** Applied review finding M1: obstacle friction once per contact, configurable stall death, tests and deviation rows.
+- **Location:** Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Reason:** User asked to fix M1, choosing stall death with a configurable time.
+- **Source Log:** —
+
+### [24-09-26 00:45] — MOVED | repository root
+- **Action:** Whole repository copied (including `.git` and uncommitted files) from `D:\Personal\#Resume & CV\Applications 2026\Lila Games - Test\Flip Prototype Game\Flip-Prototype` to `D:\Gitlab\Lila Test`. Verified: same branch, same HEAD, same working-tree status, `git fsck` clean. Old copy left for the user to delete.
+- **Location:** D:\Gitlab\Lila Test
+- **Reason:** `&` and `#` in the old path break npm, Vite and Vitest on Windows (plan review B1).
+- **Source Log:** Maintenance/setup-log.md
+
+### [24-09-26 00:50] — CREATED | Reference Files/Flip Art.html
+- **Action:** Detected the untracked design-canvas export and indexed it in reference-index.md.
+- **Location:** Reference Files/Flip Art.html
+- **Reason:** Reference File Added workflow; the file had not been indexed when it was added.
+- **Source Log:** Reference Files/reference-index.md
+
+### [25-09-26 10:51] — EDITED | Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Action:** Fixed review B2 (death tests start at x 18) and aligned shaft post geometry with the Flip Art canvas.
+- **Location:** Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Reason:** User asked to fix B2 before the art plan; the canvas read for the art plan showed the post mismatch.
+- **Source Log:** —
+
+### [25-09-26 11:02] — CREATED | Working Files/2026-09-25-flip-v1-art-plan.md
+- **Action:** Wrote the Flip v1 Art & Design implementation plan (9 TDD tasks) from the Flip Art canvas. Indexed in working-files-index.md.
+- **Location:** Working Files/2026-09-25-flip-v1-art-plan.md
+- **Reason:** User asked for a separate art and design plan after the dev plan.
+- **Source Log:** Working Files/working-files-index.md
+
+### [25-09-26 11:16] — EDITED | Working Files/2026-09-23-flip-v1-design.md
+- **Action:** Applied user decisions: the title tap waits for the logo flip; spec chevron wording follows the canvas.
+- **Location:** Working Files/2026-09-23-flip-v1-design.md
+- **Reason:** User answered both open questions from the art plan.
+- **Source Log:** —
+
+### [25-09-26 11:16] — EDITED | Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Action:** Applied user decisions: the title tap waits for the logo flip; spec chevron wording follows the canvas.
+- **Location:** Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Reason:** User answered both open questions from the art plan.
+- **Source Log:** —
+
+### [25-09-26 11:16] — EDITED | Working Files/2026-09-25-flip-v1-art-plan.md
+- **Action:** Applied user decisions: the title tap waits for the logo flip; spec chevron wording follows the canvas.
+- **Location:** Working Files/2026-09-25-flip-v1-art-plan.md
+- **Reason:** User answered both open questions from the art plan.
+- **Source Log:** —
+
+### [25-09-26 13:49] — EDITED | Working Files/2026-09-25-flip-v1-art-plan.md
+- **Action:** Applied all art-plan review findings (M1, M2, m1–m13).
+- **Location:** Working Files/2026-09-25-flip-v1-art-plan.md
+- **Reason:** User asked to fix all review findings.
+- **Source Log:** —
+
+### [25-09-26 13:49] — EDITED | Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Action:** Added project-log constraints and a Task 1 logging step.
+- **Location:** Working Files/2026-09-23-flip-v1-dev-plan.md
+- **Reason:** Same gap as art-plan review finding m12.
+- **Source Log:** —
+
+### [25-09-26 13:58] — EDITED | Working Files/2026-09-25-flip-v1-art-plan.md
+- **Action:** Applied the re-verification fixes (compat chevronSpacing, Task 4 fail count).
+- **Location:** Working Files/2026-09-25-flip-v1-art-plan.md
+- **Reason:** Subagent re-run found a Task 2–3 regression.
+- **Source Log:** —
+
+### [25-09-26 14:14] — EDITED | Working Files/2026-09-23-flip-v1-dev-plan.md, Working Files/2026-09-25-flip-v1-art-plan.md
+- **Action:** Added a per-phase checklist before each task's commit step (13 in the dev plan, 9 in the art plan), plus a Decision Log entry in each.
+- **Location:** Working Files/
+- **Reason:** User request: verify every item is built and working at the end of each phase.
+- **Source Log:** —
+
+### [25-09-26 14:31] — CREATED | game/
+- **Action:** Scaffolded the Vite project: `package.json`, `package-lock.json`, `vite.config.js`, `.gitignore`, `index.html`, `README.md`, `src/sim/`, `public/fonts/`, `test/purity.test.js`.
+- **Location:** game/
+- **Reason:** Dev plan Task 1 — code lives in `game/`.
+- **Source Log:** Maintenance/setup-log.md (Structural Change Log)
+
+### [25-09-26 14:40] — CREATED | game/src/levels/
+- **Action:** Added the per-room level folder: `index.js` (play order), `room-01-sidestep.js`, `room-02-cluster.js`, `validate.js` (authoring rules).
+- **Location:** game/src/levels/
+- **Reason:** Dev plan Task 4 — one file per room so each level can be found and edited on its own.
+- **Source Log:** Maintenance/setup-log.md (Structural Change Log)
+
+### [25-09-26 14:40] — DELETED | game/src/sim/.gitkeep
+- **Action:** Removed the placeholder; `src/sim/` now holds `vec.js`, `wave.js`, `entities.js`, `room.js`.
+- **Location:** game/src/sim/.gitkeep
+- **Reason:** Dev plan Task 4 Step 8 — folder has real files.
+- **Source Log:** Maintenance/setup-log.md (Structural Change Log)
+
+### [25-09-26 14:56] — CREATED | game/src/view/, game/src/view/anim/
+- **Action:** Added the view layer folders: `src/view/` (`camera.js`, `particles.js`) and `src/view/anim/` (`ease.js`, `effects.js`, the event → animation registry).
+- **Location:** game/src/view/
+- **Reason:** Dev plan Task 11 — view core; the view reads sim state and never changes it.
+- **Source Log:** Maintenance/setup-log.md (Structural Change Log)
+
+### [25-09-26 15:00] — CREATED | game/src/view/art/
+- **Action:** Added the blockout art folder: one module per drawable (`marks`, `walls`, `shaft`, `hookPoint`, `player`, `obstacle`, `updraft`, `hud`, `logo`).
+- **Location:** game/src/view/art/
+- **Reason:** Dev plan Task 12 — gives the Art & Design plan one file per asset to own.
+- **Source Log:** Maintenance/setup-log.md (Structural Change Log)
+
+### [25-09-26 15:00] — CREATED | .claude/
+- **Action:** Added `.claude/launch.json` with a `flip-dev` entry (`npm run dev --prefix game`, port 5173).
+- **Location:** .claude/
+- **Reason:** Dev plan Task 12 Step 9 — runs the dev server in the Claude desktop browser pane for the browser checks.
+- **Source Log:** Maintenance/setup-log.md (Structural Change Log)
+
+### [25-09-26 15:13] — CREATED | game/tools/
+- **Action:** Added the tools folder with `subset-font.md`, the exact Baloo 2 subset recipe.
+- **Location:** game/tools/
+- **Reason:** Art plan Task 1 Step 6 — lets anyone rebuild the font subset when new glyphs are needed.
+- **Source Log:** Maintenance/setup-log.md (Structural Change Log)
+
+### [25-09-26 15:13] — DELETED | game/public/fonts/.gitkeep
+- **Action:** Removed the placeholder; `public/fonts/` now holds `baloo2-subset.woff2` (17,980 bytes) and `OFL.txt`.
+- **Location:** game/public/fonts/.gitkeep
+- **Reason:** Art plan Task 1 Step 5 — folder has real files.
+- **Source Log:** Maintenance/setup-log.md (Structural Change Log)
+
+### [25-09-26 15:36] — CREATED | game/src/view/debug/
+- **Action:** Added the dev-only debug folder: `poses.js` (`?pose=title|room1|room2|win` freezes a canvas artboard scene) and `colourBlind.js` (`?cb=protan|deutan|tritan` CSS colour-vision filter).
+- **Location:** game/src/view/debug/
+- **Reason:** Art plan Task 8 — side-by-side check against the Flip Art canvas. Loaded only behind `import.meta.env.DEV`; never in the production bundle.
+- **Source Log:** Maintenance/setup-log.md (Structural Change Log)
+
+### [25-09-26 19:58] — EDITED | game/index.html, game/src/main.js
+- **Action:** Body padded by `env(safe-area-inset-*)`; text selection, iOS long-press callout, tap highlight and overscroll disabled; `resize()` now fits the room to the canvas box instead of the window.
+- **Location:** game/index.html, game/src/main.js
+- **Reason:** Mobile touch support — keep the room clear of notches and stop browser gestures on taps. Verified in 375 × 812 phone emulation; 121 tests pass.
+- **Source Log:** —
+
+### [25-09-26 19:58] — EDITED | wiki/concepts/collision-and-input.md, Commands and Logs/main-index.md
+- **Action:** Added "Mobile page setup" subsection; revised index description.
+- **Location:** wiki/concepts/collision-and-input.md, Commands and Logs/main-index.md
+- **Reason:** Document the mobile fixes above.
+- **Source Log:** Commands and Logs/wiki-log.md
+
+### [25-09-26 20:11] — EDITED | wiki/concepts/collision-and-input.md
+- **Action:** Replaced "not yet checked on a real device" with the real-phone touch result; listed notch padding and timing feel as still open.
+- **Location:** wiki/concepts/collision-and-input.md
+- **Reason:** User tested on a real phone: touch works fine.
+- **Source Log:** Commands and Logs/wiki-log.md
+
+### [25-09-26 20:12] — EDITED | wiki/concepts/collision-and-input.md
+- **Action:** Recorded the test device (Samsung Galaxy S22+, hole-punch); noted a normal Android Chrome tab most likely reports zero safe-area insets.
+- **Location:** wiki/concepts/collision-and-input.md
+- **Reason:** User supplied device details for the real-phone touch test.
+- **Source Log:** Commands and Logs/wiki-log.md
+
+### [25-09-26 20:12] — EDITED | wiki/concepts/collision-and-input.md, wiki/systems/milestones-and-risks.md
+- **Action:** Recorded that flip timing felt good and instant on the real phone; added a mobile touch latency status line under the risk table.
+- **Location:** wiki/concepts/collision-and-input.md, wiki/systems/milestones-and-risks.md
+- **Reason:** User reported timing feel from the S22+ test.
+- **Source Log:** Commands and Logs/wiki-log.md
+
+### [26-09-26 13:10] — EDITED | README.md
+- **Action:** Rewrote README for current state: Vercel play link, local run commands, stack, code layout, spec links, progress to date. Removed wiki layout and build-order sections.
+- **Location:** README.md
+- **Reason:** User request ahead of the Dev → main merge. Decision Log omitted from README at user's request.
+- **Source Log:** —

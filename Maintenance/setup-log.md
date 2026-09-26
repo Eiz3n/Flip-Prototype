@@ -157,6 +157,72 @@ Append every structural change. Dual-written with `Commands and Logs/directory-l
 - **Reason:** Git does not track empty directories, so all three would vanish on a clone. The GPS structure requires them, and the REINSTALL snapshot lists them.
 - **Linkages/References affected:** Original File Structure Snapshot above lists these three directories — they now contain a tracked file each, so a clone reproduces the snapshot exactly. `Commands and Logs/directory-log.md` dual-written.
 
+### [22-09-26 15:28] — CREATED | README.md
+- **Action:** Added a project README at the repository root.
+- **Location:** `README.md`
+- **Reason:** Repository had no landing documentation. Placed at root rather than `Commands and Logs/` — it is reader-facing project documentation, not an agent instruction or rule file, so the "all new instruction or rule files go to Commands and Logs/ only" rule does not apply.
+- **Linkages/References affected:** Links into `Commands and Logs/main-index.md`, `Reference Files/Flip-TDD.md`, and five wiki pages. Not itself indexed in any GPS index — it sits outside the indexed folders by design.
+
+### [24-09-26 00:45] — MOVED | repository root
+- **Action:** Whole repository copied (robocopy, including `.git` and uncommitted files) from `D:\Personal\#Resume & CV\Applications 2026\Lila Games - Test\Flip Prototype Game\Flip-Prototype` to `D:\Gitlab\Lila Test`. Verified: same branch `Dev`, HEAD `5692a74`, same working-tree status, `git fsck` clean. Old copy left in place for the user to delete.
+- **Location:** `D:\Gitlab\Lila Test` (new repository root)
+- **Reason:** `&` and `#` in the old path break npm's Windows command shims and Vite/Vitest path-to-URL handling (plan review finding B1). User chose this location.
+- **Linkages/References affected:** None inside the repo — all internal links are relative and no file holds the old absolute path. Claude memory copied to the new path's project key. The internal folder structure is unchanged, so the Original File Structure Snapshot above still holds.
+
+### [25-09-26 14:31] — CREATED | game/
+- **Action:** Scaffolded the Vite project: `package.json`, `package-lock.json`, `vite.config.js`, `.gitignore`, `index.html`, `README.md`, `src/sim/`, `public/fonts/`, `test/purity.test.js`.
+- **Location:** `game/`
+- **Reason:** Dev plan Task 1 — code lives in `game/`.
+- **Linkages/References affected:** `game/README.md` maps the tree. Not in any GPS index — `game/` sits outside the indexed folders. The Original File Structure Snapshot above predates it.
+
+### [25-09-26 14:40] — CREATED | game/src/levels/
+- **Action:** Added the per-room level folder: `index.js` (play order), `room-01-sidestep.js`, `room-02-cluster.js`, `validate.js` (authoring rules).
+- **Location:** `game/src/levels/`
+- **Reason:** Dev plan Task 4 — one file per room so each level can be found and edited on its own.
+- **Linkages/References affected:** `game/README.md` "Where things live" and "Add a room" point here. Not in any GPS index.
+
+### [25-09-26 14:40] — DELETED | game/src/sim/.gitkeep
+- **Action:** Removed the placeholder; `src/sim/` now holds `vec.js`, `wave.js`, `entities.js`, `room.js`.
+- **Location:** `game/src/sim/.gitkeep`
+- **Reason:** Dev plan Task 4 Step 8 — folder has real files.
+- **Linkages/References affected:** None — the purity test scans `src/sim/*.js` and never read the placeholder.
+
+### [25-09-26 14:56] — CREATED | game/src/view/, game/src/view/anim/
+- **Action:** Added the view layer folders: `src/view/` (`camera.js`, `particles.js`) and `src/view/anim/` (`ease.js`, `effects.js`, the event → animation registry).
+- **Location:** `game/src/view/`
+- **Reason:** Dev plan Task 11 — view core; the view reads sim state and never changes it.
+- **Linkages/References affected:** `game/README.md` "Where things live" names `src/view/anim/effects.js`. Not in any GPS index.
+
+### [25-09-26 15:00] — CREATED | game/src/view/art/
+- **Action:** Added the blockout art folder: one module per drawable (`marks`, `walls`, `shaft`, `hookPoint`, `player`, `obstacle`, `updraft`, `hud`, `logo`).
+- **Location:** `game/src/view/art/`
+- **Reason:** Dev plan Task 12 — gives the Art & Design plan one file per asset to own.
+- **Linkages/References affected:** `game/README.md` "Where things live" names `src/view/art/`. The art plan replaces these bodies. Not in any GPS index.
+
+### [25-09-26 15:00] — CREATED | .claude/
+- **Action:** Added `.claude/launch.json` with a `flip-dev` entry (`npm run dev --prefix game`, port 5173).
+- **Location:** `.claude/`
+- **Reason:** Dev plan Task 12 Step 9 — runs the dev server in the Claude desktop browser pane for the browser checks.
+- **Linkages/References affected:** Used by the preview tooling only. Not in any GPS index.
+
+### [25-09-26 15:13] — CREATED | game/tools/
+- **Action:** Added the tools folder with `subset-font.md`, the exact Baloo 2 subset recipe.
+- **Location:** `game/tools/`
+- **Reason:** Art plan Task 1 Step 6 — lets anyone rebuild the font subset when new glyphs are needed.
+- **Linkages/References affected:** Named in the art plan's File changes list. Not in any GPS index.
+
+### [25-09-26 15:13] — DELETED | game/public/fonts/.gitkeep
+- **Action:** Removed the placeholder; `public/fonts/` now holds `baloo2-subset.woff2` (17,980 bytes) and `OFL.txt`.
+- **Location:** `game/public/fonts/.gitkeep`
+- **Reason:** Art plan Task 1 Step 5 — folder has real files.
+- **Linkages/References affected:** `theme.font.file` (`./fonts/baloo2-subset.woff2`) now resolves; loaded by `src/view/fonts.js`. Not in any GPS index.
+
+### [25-09-26 15:36] — CREATED | game/src/view/debug/
+- **Action:** Added the dev-only debug folder: `poses.js` (`?pose=title|room1|room2|win` freezes a canvas artboard scene) and `colourBlind.js` (`?cb=protan|deutan|tritan` CSS colour-vision filter).
+- **Location:** `game/src/view/debug/`
+- **Reason:** Art plan Task 8 — side-by-side check against the Flip Art canvas. Loaded only behind `import.meta.env.DEV`; never in the production bundle.
+- **Linkages/References affected:** Imported dynamically by `game/src/main.js` in dev builds only. Not in any GPS index.
+
 ---
 
 ## Reinstall History

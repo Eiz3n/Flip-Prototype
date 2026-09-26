@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "flip-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "game"],
+      "port": 5173
+    },
+    {
+      "name": "flip-preview",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "preview", "--prefix", "game", "--", "--port", "4173", "--strictPort"],
+      "port": 4173
+    }
+  ]
+}
