@@ -1,0 +1,6 @@
+Phase:    Art (art plan)
+Task:     1
+Area:     public/fonts/, tools/subset-font.md
+Change:   Baloo 2 subset (18 KB), OFL licence, re-subset recipe
+Why:      Self-hosted font, no runtime network requests
+See also: —
