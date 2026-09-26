@@ -1,0 +1,6 @@
+Phase:    Docs
+Task:     —
+Area:     wiki
+Change:   Real-phone touch test recorded as passing
+Why:      Risk 'mobile touch latency' required a real-phone test
+See also: fb3e26b, 677f325
