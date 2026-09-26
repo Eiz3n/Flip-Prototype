@@ -1,0 +1,6 @@
+Phase:    Docs
+Task:     —
+Area:     wiki
+Change:   Test device recorded (Galaxy S22+); safe-area padding unverified on hardware
+Why:      Context for the test result
+See also: 95b7028
