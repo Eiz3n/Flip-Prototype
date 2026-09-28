@@ -90,7 +90,15 @@ export const config = deepFreeze({
     nearMissSlowmo: 0.08,
     deathSlowmo: 0.3,
     slowmoScale: 0.3,
+    clearTapDelay: 0.5,         // stage clear and win screens ignore taps this long, so a late flip tap can't skip them
   },
 
-  bestTimeKey: 'flip.bestTime.v1',
+  // v1.1 stage select: tap areas in room units. The stage box covers the "Stage N" lettering and
+  // the stats line under it (invisible, full width); the start box is a little bigger than the button.
+  select: {
+    stageBox: { x: 20, y: 190, w: 320, h: 170 },
+    startBox: { x: 80, y: 405, w: 200, h: 86 },
+  },
+
+  progressKey: 'flip.stages.v1',      // per-stage best time and stars (src/progress.js)
 });

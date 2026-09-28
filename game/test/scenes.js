@@ -1,8 +1,8 @@
 // Drives the real game through every state and renders each into a context.
 import { config } from '../src/config.js';
 import { theme } from '../src/theme.js';
-import { LEVELS } from '../src/levels/index.js';
-import { createGame, tap, update } from '../src/game.js';
+import { LEVELS, STAGES } from '../src/levels/index.js';
+import { createGame, tap, changeStage, update } from '../src/game.js';
 import { createEffects, handleEvent, updateEffects } from '../src/view/anim/effects.js';
 import { createCamera, updateCamera } from '../src/view/camera.js';
 import { renderFrame } from '../src/view/render.js';
@@ -12,7 +12,7 @@ export function makeRig() {
   const cam = createCamera();
   const seen = {};                                    // event name → count, for coverage checks
   const game = createGame({
-    levels: LEVELS, cfg: config, storage: null,
+    levels: LEVELS, stages: STAGES, cfg: config, storage: null,
     onEvent: (e) => { seen[e] = (seen[e] ?? 0) + 1; handleEvent(fx, e, game.world); },
   });
   game.seen = seen;
@@ -36,7 +36,11 @@ function toExit(w) {
 export function playThrough(ctx) {
   const { game, advance, draw } = makeRig();
   draw(ctx);                                          // title
-  tap(game); advance(0.8); draw(ctx);                 // room 1, live
+  tap(game); advance(0.3); draw(ctx);                 // stage select
+  tap(game, { x: 180, y: 250 }); advance(0.1); draw(ctx);   // numeral mid-flip → stage 2
+  advance(0.3); changeStage(game, -1); advance(0.3);  // back to stage 1
+  tap(game, null); advance(0.2); draw(ctx);           // stage start pan
+  advance(0.3); advance(0.8); draw(ctx);              // room 1, live
   const w = game.world;
   for (let i = 0; i < 20; i++) { tap(game); advance(0.05); draw(ctx); }   // flips (flip ring)
   if (game.state === 'dying') { advance(0.2); draw(ctx); advance(1.0); }  // taps may kill: let it restart
@@ -58,7 +62,14 @@ export function playThrough(ctx) {
   advance(0.4); draw(ctx);                            // room 2
   Object.assign(w.player.pos, { x: 18, y: 320 }); w.player.latched = null;
   advance(0.1); draw(ctx);                            // dying: burst
-  advance(0.7); toExit(w); advance(0.6); draw(ctx);   // win
+  advance(0.7); toExit(w); advance(0.6); draw(ctx);   // stage 1 clear screen
+  for (let room = 3; room <= 5; room++) {
+    if (game.state === 'stageClear') { advance(config.timing.clearTapDelay); tap(game); }
+    advance(config.timing.readyBeat + 0.45);            // pan or ready beat, then the entry launch
+    toExit(w); advance(0.05); draw(ctx);               // pan after room 3, stage clear after 4, win after 5
+  }
+  advance(0.1); draw(ctx);                            // win
+  advance(config.timing.clearTapDelay);
   tap(game); advance(0.1); draw(ctx);                 // back to title, logo mid-flip
   advance(0.3);
   return game;

@@ -1,16 +1,19 @@
 // Boot: canvas + DPR-capped letterbox, fixed-step loop, visibility pause.
 import { config } from './config.js';
 import { theme } from './theme.js';
-import { LEVELS } from './levels/index.js';
-import { validateLevels } from './levels/validate.js';
-import { createGame, tap, update } from './game.js';
+import { LEVELS, STAGES } from './levels/index.js';
+import { validateLevels, validateStages } from './levels/validate.js';
+import { createGame, tap, changeStage, update } from './game.js';
 import { bindInput } from './input.js';
 import { createCamera, shake, updateCamera } from './view/camera.js';
 import { createEffects, handleEvent, updateEffects } from './view/anim/effects.js';
 import { renderFrame } from './view/render.js';
 import { loadFonts } from './view/fonts.js';
 
-if (import.meta.env.DEV) validateLevels(LEVELS, config);
+if (import.meta.env.DEV) {
+  validateLevels(LEVELS, config);
+  validateStages(STAGES, LEVELS);
+}
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
@@ -24,12 +27,13 @@ const fx = createEffects(theme);
 const cam = createCamera();
 const game = createGame({
   levels: LEVELS,
+  stages: STAGES,
   cfg: config,
   storage: safeStorage(),
   onEvent: (e) => handleEvent(fx, e, game.world),
 });
 
-// Dev-only visual tools: ?pose=title|room1|room2|win freezes a canvas scene; ?cb=protan|deutan|tritan.
+// Dev-only visual tools: ?pose=title|select|room1|room2|stage|win freezes a canvas scene; ?cb=protan|deutan|tritan.
 let posed = false;
 if (import.meta.env.DEV) {
   const params = new URLSearchParams(location.search);
@@ -107,5 +111,12 @@ function stop() {
 window.addEventListener('resize', resize);
 document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
 resize();
-bindInput(canvas, window, () => { if (!posed) tap(game); });
+// Client position → room units (the letterbox offset and scale set in resize()).
+function toRoom(p) {
+  if (!p) return null;
+  const r = canvas.getBoundingClientRect();
+  return { x: (p.x - r.left - view.offsetX) / view.scale, y: (p.y - r.top - view.offsetY) / view.scale };
+}
+
+bindInput(canvas, window, (p) => { if (!posed) tap(game, toRoom(p)); }, (dir) => { if (!posed) changeStage(game, dir); });
 loadFonts(theme.font).finally(start);

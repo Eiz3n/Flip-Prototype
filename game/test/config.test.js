@@ -12,8 +12,18 @@ test('config holds the TDD tuning table', () => {
     obstacleFriction: 0.85, centerLineClearance: 20, maxReach: 220, wallMargin: 30,
     waveGrace: 0.4, waveGraceRamp: 0.15, inputLatencyComp: 0.06, launchAssist: 6,
     playerRadius: 8, nearMissDistance: 6, minWavePeriod: 4, launchPreview: false,
-    bestTimeKey: 'flip.bestTime.v1',
+    progressKey: 'flip.stages.v1',
   });
+});
+
+test('stage select tap areas sit inside the room and do not overlap', () => {
+  const { stageBox: a, startBox: b } = config.select;
+  for (const r of [a, b]) {
+    expect(r.x).toBeGreaterThanOrEqual(0);
+    expect(r.x + r.w).toBeLessThanOrEqual(config.room.width);
+    expect(r.y + r.h).toBeLessThanOrEqual(config.room.height);
+  }
+  expect(a.y + a.h).toBeLessThanOrEqual(b.y);
 });
 
 test('config holds the v1 room, shaft and timing geometry', () => {

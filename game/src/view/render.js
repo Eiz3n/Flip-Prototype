@@ -10,7 +10,7 @@ import { drawObstacle } from './art/obstacle.js';
 import { drawUpdraft } from './art/updraft.js';
 import { drawHud } from './art/hud.js';
 import { drawParticles } from './particles.js';
-import { drawTitle, drawWin } from './screens.js';
+import { drawTitle, drawSelect, drawStageClear, drawWin } from './screens.js';
 
 const wave = { frontY: -1, polAbove: 1, polBelow: 1 };
 const hud = { room: 1, rooms: 1, timeMs: 0, deaths: 0, roomPop: 0 };
@@ -61,6 +61,16 @@ export function renderFrame(ctx, game, fx, cam, alpha) {
     ctx.restore();
     return;
   }
+  if (game.state === 'select') {
+    drawSelect(ctx, game, theme);
+    ctx.restore();
+    return;
+  }
+  if (game.state === 'stageClear') {
+    drawStageClear(ctx, game, theme);
+    ctx.restore();
+    return;
+  }
   if (game.state === 'win') {
     drawWin(ctx, game, theme);
     ctx.restore();
@@ -70,6 +80,16 @@ export function renderFrame(ctx, game, fx, cam, alpha) {
   const world = game.world;
   const p = world.player;
   ctx.translate(cam.offsetX, -cam.y + cam.offsetY);
+
+  // Stage start: the select screen slides down and out while the stage's first room comes in
+  // from above, the same camera move as a room transition.
+  if (game.state === 'stageStart') {
+    drawSelect(ctx, game, theme);
+    ctx.translate(0, -R.height);
+    drawRoom(ctx, world.room, p, fx, false);
+    ctx.restore();
+    return;
+  }
 
   drawRoom(ctx, world.room, p, fx, true);
   const next = world.rooms[world.roomIndex + 1];
@@ -91,8 +111,8 @@ export function renderFrame(ctx, game, fx, cam, alpha) {
 
   hud.room = world.roomIndex + 1;
   hud.rooms = world.rooms.length;
-  hud.timeMs = Math.round(game.runTime * 1000);
-  hud.deaths = game.deaths;
+  hud.timeMs = Math.round(game.stageTime * 1000);   // stage time and deaths: what the stars rate
+  hud.deaths = game.stageDeaths;
   hud.roomPop = fx.roomPop;
   drawHud(ctx, hud, theme);
 }

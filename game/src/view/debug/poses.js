@@ -30,8 +30,8 @@ const poses = {
     p.theta = -Math.PI / 4;
     p.omega = w.room.minOrbitSpeed;
     place(p, h.pos.x + 30 * Math.cos(p.theta), h.pos.y + 30 * Math.sin(p.theta));
-    game.runTime = 18.4;
-    game.deaths = 2;
+    game.stageTime = 18.4;
+    game.stageDeaths = 2;
     fx.trail.count = 0;
   },
   room2(game, fx) {
@@ -43,22 +43,34 @@ const poses = {
     const tr = fx.trail;
     [572, 563, 553, 543].forEach((y, i) => { tr.x[i] = 265; tr.y[i] = y; tr.pol[i] = -1; });
     tr.head = 0; tr.count = 4;                         // newest (index 3, under the player) is not drawn
-    game.runTime = 41.9;
-    game.deaths = 3;
+    game.stageTime = 41.9;
+    game.stageDeaths = 3;
   },
   title(game, fx) {
     game.state = 'title';
-    game.best = null;
+    game.progress = { stages: { 1: { bestMs: 21_300, stars: 2 }, 2: { bestMs: 13_400, stars: 3 } } };
     fx.time = 0;
     fx.titleFlipped = true;
     fx.titleFlip = 0;
   },
+  select(game) {
+    game.state = 'select';
+    game.selected = 0;
+    game.selectFlip = 0;
+    game.progress = { stages: { 1: { bestMs: 13_400, stars: 2 } } };
+  },
+  stage(game) {
+    game.state = 'stageClear';
+    game.stageIndex = 1;
+    game.stageResults = [{ stage: 1, timeMs: 21_300, deaths: 1, stars: 2, newBest: false }, { stage: 2, timeMs: 13_400, deaths: 1, stars: 2, newBest: true }];
+  },
   win(game) {
     game.state = 'win';
-    game.lastTimeMs = 62_700;
-    game.deaths = 4;
-    game.best = 62_700;
-    game.newBest = true;
+    game.stageResults = [
+      { stage: 1, timeMs: 21_300, deaths: 1, stars: 2, newBest: false },
+      { stage: 2, timeMs: 13_400, deaths: 1, stars: 2, newBest: false },
+      { stage: 3, timeMs: 28_000, deaths: 2, stars: 1, newBest: true },
+    ];
   },
 };
 

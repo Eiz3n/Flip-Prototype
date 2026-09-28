@@ -47,7 +47,12 @@ export const theme = deepFreeze({
     ],
     columnY: 250, gap: 20, bestAlpha: 0.7,
   },
-  win: { columnY: 190, gap: 28, panelX: 40, panelW: 280, panelRadius: 16, panelPadX: 24, panelPadY: 20, rowGap: 12 },
+  // v1.1: win column moved up from 190 to fit the stars row and the stage summary.
+  win: { columnY: 130, gap: 28, starsGap: 16, panelX: 40, panelW: 280, panelRadius: 16, panelPadX: 24, panelPadY: 20, rowGap: 12 },
+  clear: { columnY: 170, labelAlpha: 0.7 },       // stage clear screen, same panel as win
+  // v1.1 stage select; tap areas live in config.select
+  select: { labelY: 150, labelAlpha: 0.7, stageY: 250, stageSize: 64, statsY: 318, statStar: 7, statGap: 10, hintY: 345, hintAlpha: 0.5, buttonW: 160, buttonH: 56, buttonSize: 22 },
+  stars: { big: 16, gap: 12, small: 6, smallGap: 3, smallStroke: 1.5, inner: 0.48, stageGap: 20, labelGap: 5 },
   fx: {
     latchPopScale: 1.1, latchPopTime: 0.12,
     flipRingTime: 0.25, flipRingGrow: 10,

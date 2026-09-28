@@ -2,7 +2,7 @@
 
 **▶ Play it: [flip-playtest.vercel.app](https://flip-playtest.vercel.app)** (best on a phone, portrait)
 
-**Controls:** click, tap or press Space to flip. That's the only input.
+**Controls:** click, tap or press Space to flip. That's the only input in play. On the stage select screen, tap the stage name (or press the arrow keys) to change stage, and tap Start (or press Space).
 
 A one-button browser game: tap to flip your polarity, swinging between floating hook points to climb through rooms whose walls change charge in a visible wave.
 
@@ -14,7 +14,7 @@ Built as a design test.
 
 Get launched up through the floor hatch. Tap to become the **opposite** colour of the next hook point to latch onto it, tap to **match** its colour to push off it, and keep your colour matched to the walls so they cushion you instead of pulling you in. Steer around obstacles and fly up through the doorway in the top wall to reach the next room.
 
-Touching a wall restarts the room. Touching an obstacle only kills your momentum. If you are stuck against something for 3 s, that also counts as a death. Score is total time to clear all rooms. Lower is better, and your best time is saved.
+Touching a wall restarts the room. Touching an obstacle only kills your momentum. If you are stuck against something for 3 s, that also counts as a death. Rooms come in three stages (1–2, 3–4, then 5). Each stage ends on a clear screen with up to 3 stars: a faster stage time earns more, and any death in the stage costs one star (a clear always earns at least one). Timers are per stage: each stage's best time and best stars are saved, and the title shows the stars collected. Pick any stage on the select screen; play carries on into the next stage after each clear.
 
 ## Play it locally
 
@@ -37,7 +37,7 @@ Dev-only URL flags (never in a build): `?pose=title|room1|room2|win` freezes the
 | Build | Vite → static `dist/`, `base: './'` |
 | Hosting | Vercel |
 | Tests | Vitest, headless |
-| Storage | `localStorage`, best time only |
+| Storage | `localStorage`, per-stage best time and stars |
 | Resolution | 360 × 640 logical, portrait, kept inside the phone's safe area |
 | Font | Baloo 2 subset, self-hosted, no network requests |
 | Targets | 60 fps on a mid-range phone, < 200 KB |
@@ -52,7 +52,9 @@ game/src/
   theme.js         Every colour, font, size and effect timing (synced from the art canvas)
   levels/          One file per room; index.js sets the order; validate.js checks them
   sim/             Pure simulation: no DOM, no clock, no allocation in step()
-  game.js          State machine, timer, deaths, best time
+  game.js          State machine: title, stage select, stages, timers, deaths
+  stars.js         Stage star rating
+  progress.js      Per-stage best time and stars, saved to localStorage
   view/art/        One module per drawable
   view/anim/       Turns game events into animations
   view/debug/      ?pose and ?cb dev tools
@@ -82,6 +84,8 @@ The main rules: `sim/` stays pure so it can be tested and run by bots with no br
 | Art pass and feedback effects | ✅ |
 | Real-phone touch test | ✅ Samsung Galaxy S22+: flips feel instant, timing good at `inputLatencyComp` 0.06 |
 | Playtest build on Vercel | ✅ |
+| Rooms 3–5, stage clear screens with star rating | ✅ |
+| Stage select screen, per-stage bests | ✅ |
 
 ## Release gate
 
