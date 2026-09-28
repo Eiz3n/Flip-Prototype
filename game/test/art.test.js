@@ -329,7 +329,8 @@ test('the room number pops while roomPop runs', () => {
 });
 
 import { drawLogo } from '../src/view/art/logo.js';
-import { drawTitle, drawWin } from '../src/view/screens.js';
+import { drawTitle, drawSelect, drawStageClear, drawWin, numeralFlip } from '../src/view/screens.js';
+import { config } from '../src/config.js';
 
 const fontOf = (ctx, text) => calls(ctx, 'fillText').find((e) => e.args[0] === text)?.font;
 
@@ -355,7 +356,7 @@ test('logo tracking is −2 between letters', () => {
   expect(xs[2] - xs[1]).toBeCloseTo(w - 2);
 });
 
-function titleGame(best = null) { return { best }; }
+function titleGame(stages = {}) { return { progress: { stages }, stages: [{}, {}, {}] }; }
 function titleFx() { return { titleFlipped: true, titleFlip: 0, time: 0 }; }
 
 test('title: four idle hooks with faint rings, copy per canvas', () => {
@@ -366,20 +367,96 @@ test('title: four idle hooks with faint rings, copy per canvas', () => {
   const discs = calls(ctx, 'fill').filter((e) => e.fill === '#6FA8DC' || e.fill === '#E27D7D');
   expect(discs).toHaveLength(4);
   expect(fontOf(ctx, 'tap to start')).toBe(`700 16px ${theme.font.family}`);
-  const best = calls(ctx, 'fillText').find((e) => e.args[0] === 'best —');
-  expect(best.font).toBe(`400 13px ${theme.font.family}`);
-  expect(best.alpha).toBe(0.7);
+  const stars = calls(ctx, 'fillText').find((e) => e.args[0] === '0 / 9');
+  expect(stars.font).toBe(`400 13px ${theme.font.family}`);
+  expect(stars.alpha).toBe(0.7);
 });
 
-test('title shows a stored best time', () => {
+test('title shows stars collected across stages', () => {
   const ctx = recordingCtx();
-  drawTitle(ctx, titleGame(62_799), titleFx(), theme);
-  expect(calls(ctx, 'fillText').some((e) => e.args[0] === 'best 1:02.7')).toBe(true);
+  drawTitle(ctx, titleGame({ 1: { bestMs: 9_000, stars: 3 }, 3: { bestMs: 30_000, stars: 1 } }), titleFx(), theme);
+  expect(calls(ctx, 'fillText').some((e) => e.args[0] === '4 / 9')).toBe(true);
 });
 
-function winGame(newBest) { return { lastTimeMs: 62_799, deaths: 4, best: 62_799, newBest }; }
+function selectGame(over = {}) {
+  return { stages: [{}, {}, {}], selected: 0, selectFrom: 0, selectFlip: 0, progress: { stages: {} }, ...over };
+}
 
-test('win: Cleared, rounded neutral panel with three rows, New best only when beaten', () => {
+test('select: Stage N lettering, not-cleared note, Start pill inside its tap area', () => {
+  const ctx = recordingCtx();
+  drawSelect(ctx, selectGame(), theme);
+  const texts = calls(ctx, 'fillText').map((e) => e.args[0]);
+  expect(texts).toEqual(expect.arrayContaining(['choose a stage', 'Stage', '1', 'not cleared yet', 'tap to change', 'Start']));
+  expect(fontOf(ctx, 'Stage')).toBe(`800 64px ${theme.font.family}`);
+  expect(fontOf(ctx, 'Start')).toBe(`800 22px ${theme.font.family}`);
+  const pill = calls(ctx, 'roundRect')[0].args;
+  const b = config.select.startBox;
+  expect(pill[0]).toBeGreaterThanOrEqual(b.x);
+  expect(pill[0] + pill[2]).toBeLessThanOrEqual(b.x + b.w);
+  expect(pill[1]).toBeGreaterThanOrEqual(b.y);
+  expect(pill[1] + pill[3]).toBeLessThanOrEqual(b.y + b.h);
+});
+
+test('select: a cleared stage shows its best time and stars', () => {
+  const ctx = recordingCtx();
+  drawSelect(ctx, selectGame({ selected: 1, progress: { stages: { 2: { bestMs: 13_400, stars: 2 } } } }), theme);
+  expect(calls(ctx, 'fillText').some((e) => e.args[0] === 'best 0:13.4')).toBe(true);
+  expect(calls(ctx, 'fill').filter((e) => e.fill === '#26252E').length).toBe(2);
+  expect(calls(ctx, 'fillText').some((e) => e.args[0] === 'not cleared yet')).toBe(false);
+});
+
+test('numeral flip: old digit turns to the quarter, new digit lands upright with the overshoot', () => {
+  const T = config.timing.titleFlipTime;
+  const g = (left) => selectGame({ selected: 1, selectFrom: 0, selectFlip: left });
+  expect(numeralFlip(g(0))).toEqual({ index: 1, rot: 0 });
+  const early = numeralFlip(g(T * 0.95));
+  expect(early.index).toBe(0);
+  expect(early.rot).toBeGreaterThan(0);
+  expect(early.rot).toBeLessThan(Math.PI / 2);
+  const late = numeralFlip(g(T * 0.3));
+  expect(late.index).toBe(1);
+  expect(Math.abs(late.rot)).toBeLessThan(Math.PI / 2);
+  // easeOutBack peaks above 1, so the new digit swings just past upright before settling.
+  const peak = Math.max(...Array.from({ length: 50 }, (_, i) => numeralFlip(g(T * (1 - i / 50))).rot));
+  expect(peak).toBeGreaterThan(0);
+  const ctx = recordingCtx();
+  drawSelect(ctx, g(T * 0.5), theme);
+  expect(calls(ctx, 'rotate')).toHaveLength(1);
+});
+
+const RESULTS = [
+  { stage: 1, timeMs: 21_300, deaths: 1, stars: 2, newBest: false },
+  { stage: 2, timeMs: 13_400, deaths: 0, stars: 3, newBest: false },
+  { stage: 3, timeMs: 62_799, deaths: 4, stars: 1, newBest: false },
+];
+function winGame(newBest) { return { stageResults: RESULTS.map((r, i) => (i === 2 ? { ...r, newBest } : r)) }; }
+
+// Stars are ink paths: filled ones get fill() + stroke(), empty ones stroke() only.
+const inkFills = (ctx) => calls(ctx, 'fill').filter((e) => e.fill === '#26252E').length;
+
+test('stage clear: Stage label, Cleared, earned stars filled, two-row panel, tap to continue', () => {
+  const ctx = recordingCtx();
+  drawStageClear(ctx, { stageIndex: 1, stageResults: [RESULTS[0], { ...RESULTS[1], newBest: true }] }, theme);
+  expect(fontOf(ctx, 'New best')).toBe(`700 13px ${theme.font.family}`);
+  expect(fontOf(ctx, 'Stage 2')).toBe(`700 13px ${theme.font.family}`);
+  expect(fontOf(ctx, 'Cleared')).toBe(`800 44px ${theme.font.family}`);
+  for (const label of ['Time', 'Deaths']) expect(fontOf(ctx, label)).toBe(`400 15px ${theme.font.family}`);
+  expect(calls(ctx, 'fillText').some((e) => e.args[0] === 'Best')).toBe(false);
+  expect(fontOf(ctx, 'tap to continue')).toBe(`700 16px ${theme.font.family}`);
+  expect(inkFills(ctx)).toBe(3);                                      // 3 of 3 stars earned
+  const panel = calls(ctx, 'roundRect')[0];
+  expect(panel.args[3]).toBe(2 * 2 + 2 * 20 + 2 * 15 * 1.6 + 12);     // two rows
+});
+
+test('win: final stage stars plus one small star group per stage', () => {
+  const ctx = recordingCtx();
+  drawWin(ctx, winGame(false), theme);
+  expect(inkFills(ctx)).toBe(1 + (2 + 3 + 1));                        // big row: 1; summary: 2 + 3 + 1
+  const labels = calls(ctx, 'fillText').filter((e) => e.font === `700 13px ${theme.font.family}`).map((e) => e.args[0]);
+  expect(labels).toEqual(['1', '2', '3']);                            // digits in the panel are 800 15px
+});
+
+test('win: Cleared, rounded neutral panel with the final stage rows, New best only when beaten', () => {
   const ctx = recordingCtx();
   drawWin(ctx, winGame(true), theme);
   expect(fontOf(ctx, 'Cleared')).toBe(`800 44px ${theme.font.family}`);
@@ -388,7 +465,8 @@ test('win: Cleared, rounded neutral panel with three rows, New best only when be
   expect(panel.args[2]).toBe(280);
   expect(panel.args[4]).toBe(16);
   expect(calls(ctx, 'fill').some((e) => e.fill === '#A9A4B5')).toBe(true);
-  for (const label of ['Time', 'Deaths', 'Best']) expect(fontOf(ctx, label)).toBe(`400 15px ${theme.font.family}`);
+  for (const label of ['Time', 'Deaths']) expect(fontOf(ctx, label)).toBe(`400 15px ${theme.font.family}`);
+  expect(calls(ctx, 'fillText').some((e) => e.args[0] === 'Best')).toBe(false);
   expect(fontOf(ctx, 'New best')).toBe(`700 13px ${theme.font.family}`);
   expect(fontOf(ctx, 'tap to return')).toBe(`700 16px ${theme.font.family}`);
 
@@ -411,14 +489,14 @@ test('room1 pose matches the Room 1 artboard state', () => {
   expect(p.latched).toBe(w.room.hookPoints[0]);
   expect(p.pos.x).toBeCloseTo(131.21, 1);
   expect(p.pos.y).toBeCloseTo(448.79, 1);
-  expect(game.runTime).toBeCloseTo(18.4);
+  expect(game.stageTime).toBeCloseTo(18.4);
   const ctx = recordingCtx();
   draw(ctx);
   expect(calls(ctx, 'fillRect').some((e) => e.fill === '#26252E' && e.args[1] === 260 && e.args[2] === 360)).toBe(true);
 });
 
-test('room2, title and win poses render; unknown names are refused', () => {
-  for (const name of ['room2', 'title', 'win']) {
+test('room2, title, select, stage and win poses render; unknown names are refused', () => {
+  for (const name of ['room2', 'title', 'select', 'stage', 'win']) {
     const { game, fx, draw } = makeRig();
     expect(applyPose(name, game, fx)).toBe(true);
     expect(() => draw(recordingCtx())).not.toThrow();
@@ -443,5 +521,5 @@ test('title and win text use the same line-box centring', () => {
   const ctx = recordingCtx(BALOO);
   drawWin(ctx, winGame(true), theme);
   const cleared = calls(ctx, 'fillText').find((e) => e.args[0] === 'Cleared');
-  expect(cleared.args[2]).toBeCloseTo(190 + 44 * 1.6 / 2 + 44 * (BALOO.ascent - BALOO.descent) / 2);
+  expect(cleared.args[2]).toBeCloseTo(theme.win.columnY + 44 * 1.6 / 2 + 44 * (BALOO.ascent - BALOO.descent) / 2);
 });

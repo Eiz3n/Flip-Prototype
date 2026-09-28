@@ -79,3 +79,14 @@ export function validateLevels(levels, cfg) {
     if (errors.length) throw new Error(`Room ${def.index}: ${errors.join('; ')}`);
   });
 }
+
+// Stages must cover every room once, in play order, each with gold faster than silver.
+export function validateStages(stages, levels) {
+  const order = stages.flatMap((s) => s.rooms);
+  const expected = levels.map((l) => l.index);
+  if (order.join() !== expected.join()) throw new Error(`Stages cover rooms ${order.join(', ')}, expected ${expected.join(', ')}`);
+  stages.forEach((s, i) => {
+    if (!s.rooms.length) throw new Error(`Stage ${i + 1}: no rooms`);
+    if (!(s.goldMs > 0 && s.goldMs < s.silverMs)) throw new Error(`Stage ${i + 1}: gold time must be positive and below silver`);
+  });
+}

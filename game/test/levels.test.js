@@ -1,15 +1,28 @@
 import { test, expect } from 'vitest';
 import { config } from '../src/config.js';
 import { LEVELS } from '../src/levels/index.js';
-import { validateLevels, levelErrors } from '../src/levels/validate.js';
+import { LEVELS as ALL, STAGES } from '../src/levels/index.js';
+import { validateLevels, levelErrors, validateStages } from '../src/levels/validate.js';
 
-test('both v1 rooms pass every authoring rule', () => {
-  expect(LEVELS.map((l) => l.index)).toEqual([1, 2]);
+test('all five rooms pass every authoring rule', () => {
+  expect(LEVELS.map((l) => l.index)).toEqual([1, 2, 3, 4, 5]);
   expect(() => validateLevels(LEVELS, config)).not.toThrow();
 });
 
 test('room n+1 entry sits under room n exit', () => {
-  expect(LEVELS[1].entry.x).toBe(LEVELS[0].exit.x);
+  for (let i = 1; i < LEVELS.length; i++) expect(LEVELS[i].entry.x).toBe(LEVELS[i - 1].exit.x);
+});
+
+test('stages are 1+2, 3+4, then 5 alone, with gold below silver', () => {
+  expect(STAGES.map((s) => s.rooms)).toEqual([[1, 2], [3, 4], [5]]);
+  expect(() => validateStages(STAGES, ALL)).not.toThrow();
+});
+
+test('broken stage tables are refused', () => {
+  expect(() => validateStages([{ rooms: [1, 2], goldMs: 1, silverMs: 2 }], ALL)).toThrow(/expected 1, 2, 3, 4, 5/);
+  expect(() => validateStages([{ rooms: [2, 1, 3, 4, 5], goldMs: 1, silverMs: 2 }], ALL)).toThrow(/Stages cover/);
+  const slow = [{ rooms: [1, 2, 3, 4, 5], goldMs: 5, silverMs: 5 }];
+  expect(() => validateStages(slow, ALL)).toThrow(/Stage 1: gold/);
 });
 
 test('a broken room throws with its index', () => {

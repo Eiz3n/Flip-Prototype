@@ -1,8 +1,8 @@
 import { test, expect } from 'vitest';
 import { config } from '../src/config.js';
 import { theme } from '../src/theme.js';
-import { LEVELS } from '../src/levels/index.js';
-import { createGame, tap, update } from '../src/game.js';
+import { LEVELS, STAGES } from '../src/levels/index.js';
+import { createGame, tap, changeStage, update } from '../src/game.js';
 import { createEffects, handleEvent, updateEffects } from '../src/view/anim/effects.js';
 import { createCamera, updateCamera } from '../src/view/camera.js';
 import { renderFrame } from '../src/view/render.js';
@@ -28,7 +28,7 @@ function fakeCtx() {
 function setup() {
   const fx = createEffects(theme);
   const cam = createCamera();
-  const game = createGame({ levels: LEVELS, cfg: config, storage: null, onEvent: (e) => handleEvent(fx, e, game.world) });
+  const game = createGame({ levels: LEVELS, stages: STAGES, cfg: config, storage: null, onEvent: (e) => handleEvent(fx, e, game.world) });
   const ctx = fakeCtx();
   const frame = (seconds) => {
     for (let i = 0; i < Math.round(seconds / config.step); i++) {
@@ -50,8 +50,13 @@ test('formatTime', () => {
 test('every state renders without error and without gradients or shadows', () => {
   const { game, frame } = setup();
   frame(0);                                            expect(game.state).toBe('title');
-  tap(game); frame(0.2);                               // ready beat
-  frame(0.6);                                          expect(game.state).toBe('playing');
+  tap(game); frame(0.3);                               expect(game.state).toBe('select');
+  tap(game, { x: 180, y: 250 }); frame(0.1);           // numeral mid-flip
+  frame(0.3); tap(game, { x: 180, y: 620 });           // outside both boxes: nothing
+  expect(game.state).toBe('select');
+  changeStage(game, -1); frame(0.3);                   // back to stage 1
+  tap(game, null); frame(0.2);                         expect(game.state).toBe('stageStart');   // mid-pan
+  frame(0.3); frame(0.6);                              expect(game.state).toBe('playing');
   const w = game.world;
   Object.assign(w.player.pos, { x: w.room.exitX, y: 60 });
   w.player.bufferEntry = false; w.player.latched = null;
@@ -64,6 +69,16 @@ test('every state renders without error and without gradients or shadows', () =>
   frame(0.7);                                          // dying done, ready beat running
   Object.assign(w.player.pos, { x: w.room.exitX, y: 60 });   // ready phase holds position
   frame(0.6);                                          // entry launch → exit pull → capture
+  expect(game.state).toBe('stageClear');
+  frame(0.1);                                          // stage clear screen
+  for (let room = 3; room <= 5; room++) {
+    if (game.state === 'stageClear') { frame(config.timing.clearTapDelay); tap(game); }
+    frame(config.timing.readyBeat + 0.45);             // pan or ready beat, then the entry launch
+    expect(game.world.roomIndex).toBe(room - 1);
+    Object.assign(w.player.pos, { x: w.room.exitX, y: 60 });
+    w.player.bufferEntry = false; w.player.latched = null;
+    frame(0.05);
+  }
   expect(game.state).toBe('win');
   frame(0.1);                                          // win screen
 });

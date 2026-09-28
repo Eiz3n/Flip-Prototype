@@ -110,6 +110,7 @@ export function handleEvent(fx, type, world) {
     case 'exitCaptured':
       fx.roomPop = f.roomPopTime;
       break;
+    case 'stageStart':
     case 'roomStart':
       fx.trail.count = 0;
       fx.trail.has = false;

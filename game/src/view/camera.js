@@ -1,4 +1,4 @@
-// Camera frames one room exactly. During Transition it eases up one room height.
+// Camera frames one room exactly. During Transition and Stage start it eases up one room height.
 import { easeOutCubic, clamp01 } from './anim/ease.js';
 
 export function createCamera() {
@@ -15,7 +15,7 @@ export function shake(cam, amount, time) {
 
 export function updateCamera(cam, game, dt, rand = Math.random) {
   const { cfg } = game;
-  cam.y = game.state === 'transition'
+  cam.y = game.state === 'transition' || game.state === 'stageStart'
     ? -cfg.room.height * easeOutCubic(clamp01(game.stateTime / cfg.timing.panTime))
     : 0;
 
